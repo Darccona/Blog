@@ -1,7 +1,9 @@
 package org.darccona;
 
+import org.darccona.database.entity.NoticeEntity;
 import org.darccona.database.entity.RecordEntity;
 import org.darccona.database.entity.UserEntity;
+import org.darccona.database.repository.NoticeRepository;
 import org.darccona.database.repository.RecordRepository;
 import org.darccona.database.repository.UserRepository;
 import org.darccona.model.*;
@@ -26,6 +28,8 @@ public class BlogController {
     UserRepository userRepository;
     @Autowired
     RecordRepository recordRepository;
+    @Autowired
+    NoticeRepository noticeRepository;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -82,7 +86,8 @@ public class BlogController {
         for (String name : user.getSub()) {
             for (RecordEntity record : recordRepository.findByUser(userRepository.findByName(name))) {
                 recordList.add(new RecordModel(record.getText(), name, record.getDate(),
-                        record.getLike(), user.getLikeRecord().contains(record.getId()), false, record.getId()));
+                        record.getLike(), record.getFav(), record.getComm(),
+                        user.getLikeRecord().contains(record.getId()), user.getFavRecord().contains(record.getId()), record.getId()));
             }
         }
         Collections.sort(recordList, RecordModel.COMPARE_BY_DATE);
@@ -95,6 +100,14 @@ public class BlogController {
             }
         }
         model.addAttribute("users", userList);
+
+        List<NoticeModel> noticeList = new ArrayList<>();
+        for (NoticeEntity notice: user.getNotice()) {
+            noticeList.add(new NoticeModel(notice.getText(), notice.getRecord(), notice.getComm(), notice.getDate(), notice.getType()));
+        }
+        Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
+        model.addAttribute("notice", noticeList);
+        model.addAttribute("num", user.getNotice().size());
 
         if (recordList.size() == 0) {
             model.addAttribute("bool", new BoolModel("sub"));
@@ -113,7 +126,8 @@ public class BlogController {
         for (long id: user.getLikeRecord()) {
             RecordEntity record = recordRepository.findById(id);
             recordList.add(new RecordModel(record.getText(), record.getUser().getName(), record.getDate(),
-                    record.getLike(), user.getLikeRecord().contains(record.getId()), false, record.getId()));
+                    record.getLike(), record.getFav(), record.getComm(),
+                    user.getLikeRecord().contains(record.getId()), user.getFavRecord().contains(record.getId()), record.getId()));
         }
         Collections.sort(recordList, RecordModel.COMPARE_BY_DATE);
         model.addAttribute("record", recordList);
@@ -126,7 +140,96 @@ public class BlogController {
         }
         model.addAttribute("users", userList);
 
+        List<NoticeModel> noticeList = new ArrayList<>();
+        for (NoticeEntity notice: user.getNotice()) {
+            noticeList.add(new NoticeModel(notice.getText(), notice.getRecord(), notice.getComm(), notice.getDate(), notice.getType()));
+        }
+        Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
+        model.addAttribute("notice", noticeList);
+        model.addAttribute("num", user.getNotice().size());
+
         model.addAttribute("bool", new BoolModel("like"));
+        model.addAttribute("user", user.getName());
+        model.addAttribute("string", new StringModel());
+        return "blog";
+    }
+
+    @RequestMapping("/blog/favRecord")
+    public String blogFav(Principal principal, Model model) {
+        UserEntity user = userRepository.findByName(principal.getName());
+        List<RecordModel> recordList = new ArrayList<>();
+        for (long id: user.getFavRecord()) {
+            RecordEntity record = recordRepository.findById(id);
+            recordList.add(new RecordModel(record.getText(), record.getUser().getName(), record.getDate(),
+                    record.getLike(), record.getFav(), record.getComm(),
+                    user.getLikeRecord().contains(record.getId()), user.getFavRecord().contains(record.getId()), record.getId()));
+        }
+        Collections.sort(recordList, RecordModel.COMPARE_BY_DATE);
+        model.addAttribute("record", recordList);
+
+        List<UserModel> userList = new ArrayList<>();
+        for (UserEntity users : userRepository.findAll()) {
+            if (users != user) {
+                userList.add(new UserModel(users.getName()));
+            }
+        }
+        model.addAttribute("users", userList);
+
+        List<NoticeModel> noticeList = new ArrayList<>();
+        for (NoticeEntity notice: user.getNotice()) {
+            noticeList.add(new NoticeModel(notice.getText(), notice.getRecord(), notice.getComm(), notice.getDate(), notice.getType()));
+        }
+        Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
+        model.addAttribute("notice", noticeList);
+        model.addAttribute("num", user.getNotice().size());
+
+        model.addAttribute("bool", new BoolModel("fav"));
+        model.addAttribute("user", user.getName());
+        model.addAttribute("string", new StringModel());
+        return "blog";
+    }
+
+    @RequestMapping("/blog/userRecord")
+    public String blogUser(@RequestParam(value = "name") String name,
+                           Principal principal, Model model) {
+        UserEntity user = userRepository.findByName(principal.getName());
+        UserEntity userRecord = userRepository.findByName(name);
+        List<RecordModel> recordList = new ArrayList<>();
+        if (user != userRecord) {
+            for (RecordEntity record : userRecord.getRecord()) {
+                recordList.add(new RecordModel(record.getText(), userRecord.getName(), record.getDate(),
+                        record.getLike(), record.getFav(), record.getComm(),
+                        user.getLikeRecord().contains(record.getId()), user.getFavRecord().contains(record.getId()), record.getId()));
+            }
+            model.addAttribute("bool", new BoolModel("userRecord"));
+        } else {
+            for (RecordEntity record : userRecord.getRecord()) {
+                recordList.add(new RecordModel(record.getText(), userRecord.getName(), record.getDate(),
+                        record.getLike(), record.getFav(), record.getComm(),
+                        false,false, record.getId()));
+            }
+            model.addAttribute("bool", new BoolModel("myRecord"));
+        }
+
+        Collections.sort(recordList, RecordModel.COMPARE_BY_DATE);
+        model.addAttribute("record", recordList);
+
+        List<UserModel> userList = new ArrayList<>();
+        for (UserEntity users : userRepository.findAll()) {
+            if (users != user) {
+                userList.add(new UserModel(users.getName()));
+            }
+        }
+        model.addAttribute("users", userList);
+
+        List<NoticeModel> noticeList = new ArrayList<>();
+        for (NoticeEntity notice: user.getNotice()) {
+            noticeList.add(new NoticeModel(notice.getText(), notice.getRecord(), notice.getComm(), notice.getDate(), notice.getType()));
+        }
+        Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
+        model.addAttribute("notice", noticeList);
+        model.addAttribute("num", user.getNotice().size());
+
         model.addAttribute("user", user.getName());
         model.addAttribute("string", new StringModel());
         return "blog";
@@ -134,12 +237,17 @@ public class BlogController {
 
     @PostMapping("/blog/addRecord")
     public String recordAdd(@ModelAttribute("string") StringModel string,
+                            @RequestParam(value = "link", required = false, defaultValue = "") String link,
                             Principal principal, Model model) {
         UserEntity user = userRepository.findByName(principal.getName());
         RecordEntity record = new RecordEntity(string.getText());
         record.setUser(user);
         recordRepository.save(record);
-        return "redirect:/blog";
+        String url = "http://localhost:8080/blog/" + link;
+        if (link.equals("userRecord")) {
+            url += "?name=" + user.getName();
+        }
+        return "redirect:" + url;
     }
 
     @GetMapping("/blog/sub")
@@ -152,27 +260,68 @@ public class BlogController {
             userRepository.save(user);
         }
 //        else return "nope";
+
+        NoticeEntity notice = new NoticeEntity(2, user.getName(), null, null);
+        notice.setUser(sub);
+        noticeRepository.save(notice);
+//        sub.setNotice(notice);
+        userRepository.save(sub);
+
         return "redirect:/blog";
     }
 
     @GetMapping("/blog/like")
     public String userLike(@RequestParam(value = "id") long id,
+                           @RequestParam(value = "link", required = false, defaultValue = "") String link,
                           Principal principal, Model model) {
         UserEntity user = userRepository.findByName(principal.getName());
-        RecordEntity like = recordRepository.findById(id);
-        if (like != null) {
+        RecordEntity record = recordRepository.findById(id);
+        if (record != null) {
             if (!user.getLikeRecord().contains(id)) {
                 user.setLikeRecord(id);
-                like.setLike();
+                record.setLike();
             } else {
                 user.removeLikeRecord(id);
-                like.removeLike();
+                record.removeLike();
             }
             userRepository.save(user);
-            recordRepository.save(like);
+            recordRepository.save(record);
         }
-        return "redirect:/blog";
+
+        NoticeEntity notice = new NoticeEntity(1, user.getName(), record.getText(), null);
+        notice.setUser(record.getUser());
+        noticeRepository.save(notice);
+//        record.getUser().setNotice(notice);
+        userRepository.save(record.getUser());
+
+        String url = "http://localhost:8080/blog/" + link;
+        if (link.equals("userRecord")) {
+            url += "?name=" + record.getUser().getName();
+        }
+        return "redirect:" + url;
     }
 
-
+    @GetMapping("/blog/fav")
+    public String userFav(@RequestParam(value = "id") long id,
+                          @RequestParam(value = "link", required = false, defaultValue = "") String link,
+                           Principal principal, Model model) {
+        UserEntity user = userRepository.findByName(principal.getName());
+        RecordEntity record = recordRepository.findById(id);
+        if (record != null) {
+            if (!user.getFavRecord().contains(id)) {
+                user.setFavRecord(id);
+                record.setFav();
+            } else {
+                user.removeFavRecord(id);
+                record.removeFav();
+            }
+            userRepository.save(user);
+            recordRepository.save(record);
+        }
+        String url = "http://localhost:8080/blog/" + link;
+        if (link.equals("userRecord")) {
+            url += "?name=" + record.getUser().getName();
+        }
+        return "redirect:" + url;
+    }
 }

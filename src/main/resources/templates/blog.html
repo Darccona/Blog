@@ -17,14 +17,27 @@
         <div th:if="not ${bool.rec}">
             <li class="list-group-item"><a href="/blog">Рекомендации</a></li>
         </div>
+
         <div th:if="${bool.like}">
             <li class="list-group-item active"><a>Понравившееся</a></li>
         </div>
         <div th:if="not ${bool.like}">
             <li class="list-group-item"><a href="/blog/likeRecord">Понравившееся</a></li>
         </div>
-        <li class="list-group-item"><a>Избранное</a></li>
-        <li class="list-group-item"><a>Мои_посты</a></li>
+
+        <div th:if="${bool.fav}">
+            <li class="list-group-item active"><a>Избранное</a></li>
+        </div>
+        <div th:if="not ${bool.fav}">
+            <li class="list-group-item"><a href="/blog/favRecord">Избранное</a></li>
+        </div>
+
+        <div th:if="${bool.myRecord}">
+            <li class="list-group-item active"><a>Мои_посты</a></li>
+        </div>
+        <div th:if="not ${bool.myRecord}">
+            <li class="list-group-item"><a th:href="@{/blog/userRecord?name={n}(n=${user})}">Мои_посты</a></li>
+        </div>
     </ul>
     <div class="container-fluid">
         <div style="float: left">
@@ -41,6 +54,8 @@
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="${user}"></a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal">Добавить пост</a></li>
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#mesModal">Уведомления<span class="badge bg-primary" th:text="${num}"></span></a></li>
+<!--                            <li><a class="dropdown-item" href="/blog/notice">Уведомления<span class="badge bg-primary" th:text="${num}"></span></a></li>-->
                             <li><a class="dropdown-item" href="#">Настройки</a></li>
                             <li><a class="dropdown-item" href="/logout">Выход</a></li>
                         </ul>
@@ -56,7 +71,7 @@
     <div class="row">
         <div class="col-8">
             <div th:if="${bool.sub}">
-                <h4>Вы ещё не накого не подписаны.</h4>
+                <h4>Вы ещё ни накого не подписаны.</h4>
                 <h4>Пора это исправить -></h4>
             </div>
             <table class="table">
@@ -64,23 +79,74 @@
                     <td>
                         <div class="shadow-sm p-3 mb-5 bg-body rounded">
                             <figure>
-                                <blockquote class="blockquote" th:text="${r.username}"></blockquote>
+                                <blockquote class="blockquote"><a th:href="@{/blog/userRecord?name={n}(n=${r.username})}" th:text="${r.username}"></a></blockquote>
                                 <figcaption class="blockquote-footer" th:text="${r.date}"></figcaption>
                             </figure>
                             <p class="text-start" th:text="${r.text}"></p>
                             <p th:text="'Понравилось ' + ${r.like} + ' человек'"></p>
+                            <p th:text="'Добавили в избранное ' + ${r.fav} + ' человек'"></p>
+                            <p th:text="'Комментировали ' + ${r.comm} + ' человек'"></p>
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <div th:if="${r.likeBool}">
-                                    <a class="btn btn-primary me-md-2" type="button" th:href="@{/blog/like?id={i}(i=${r.id})}">Нравиться</a>
+                                    <div th:if="${bool.rec}">
+                                        <a class="btn btn-primary me-md-2" type="button" th:href="@{/blog/like?id={i}(i=${r.id})}">Нравится</a>
+                                    </div>
+                                    <div th:if="${bool.like}">
+                                        <a class="btn btn-primary me-md-2" type="button" th:href="@{/blog/like?id={i}&link=likeRecord(i=${r.id})}">Нравится</a>
+                                    </div>
+                                    <div th:if="${bool.fav}">
+                                        <a class="btn btn-primary me-md-2" type="button" th:href="@{/blog/like?id={i}&link=favRecord(i=${r.id})}">Нравится</a>
+                                    </div>
+                                    <div th:if="${bool.userRecord}">
+                                        <a class="btn btn-primary me-md-2" type="button" th:href="@{/blog/like?id={i}&link=userRecord(i=${r.id})}">Нравится</a>
+                                    </div>
                                 </div>
                                 <div th:if="not ${r.likeBool}">
-                                    <a class="btn btn-outline-primary me-md-2" type="button" th:href="@{/blog/like?id={i}(i=${r.id})}">Нравиться</a>
+                                    <div th:if="${bool.rec}">
+                                        <a class="btn btn-outline-primary me-md-2" type="button" th:href="@{/blog/like?id={i}(i=${r.id})}">Нравится</a>
+                                    </div>
+                                    <div th:if="${bool.like}">
+                                        <a class="btn btn-outline-primary me-md-2" type="button" th:href="@{/blog/like?id={i}&link=likeRecord(i=${r.id})}">Нравится</a>
+                                    </div>
+                                    <div th:if="${bool.fav}">
+                                        <a class="btn btn-outline-primary me-md-2" type="button" th:href="@{/blog/like?id={i}&link=favRecord(i=${r.id})}">Нравится</a>
+                                    </div>
+                                    <div th:if="${bool.userRecord}">
+                                        <a class="btn btn-outline-primary me-md-2" type="button" th:href="@{/blog/like?id={i}&link=userRecord(i=${r.id})}">Нравится</a>
+                                    </div>
                                 </div>
+
                                 <div th:if="${r.favBool}">
-                                    <a class="btn btn-primary me-md-2" type="button">B избранное</a>
+                                    <div th:if="${bool.rec}">
+                                        <a class="btn btn-primary me-md-2" type="button" th:href="@{/blog/fav?id={i}(i=${r.id})}">B избранное</a>
+                                    </div>
+                                    <div th:if="${bool.like}">
+                                        <a class="btn btn-primary me-md-2" type="button" th:href="@{/blog/fav?id={i}&link=likeRecord(i=${r.id})}">B избранное</a>
+                                    </div>
+                                    <div th:if="${bool.fav}">
+                                        <a class="btn btn-primary me-md-2" type="button" th:href="@{/blog/fav?id={i}&link=favRecord(i=${r.id})}">B избранное</a>
+                                    </div>
+                                    <div th:if="${bool.userRecord}">
+                                        <a class="btn btn-primary me-md-2" type="button" th:href="@{/blog/fav?id={i}&link=userRecord(i=${r.id})}">B избранное</a>
+                                    </div>
                                 </div>
                                 <div th:if="not ${r.favBool}">
-                                    <a class="btn btn-outline-primary me-md-2" type="button">B избранное</a>
+                                    <div th:if="${bool.rec}">
+                                        <a class="btn btn-outline-primary me-md-2" type="button" th:href="@{/blog/fav?id={i}(i=${r.id})}">B избранное</a>
+                                    </div>
+                                    <div th:if="${bool.like}">
+                                        <a class="btn btn-outline-primary me-md-2" type="button" th:href="@{/blog/fav?id={i}&link=likeRecord(i=${r.id})}">B избранное</a>
+                                    </div>
+                                    <div th:if="${bool.fav}">
+                                        <a class="btn btn-outline-primary me-md-2" type="button" th:href="@{/blog/fav?id={i}&link=favRecord(i=${r.id})}">B избранное</a>
+                                    </div>
+                                    <div th:if="${bool.userRecord}">
+                                        <a class="btn btn-outline-primary me-md-2" type="button" th:href="@{/blog/fav?id={i}&link=userRecord(i=${r.id})}">B избранное</a>
+                                    </div>
+                                </div>
+                                <div th:if="${bool.myRecord}">
+                                    <button type="button" class="btn btn-outline-primary me-md-2" disabled>Нравится</button>
+                                    <button type="button" class="btn btn-outline-primary me-md-2" disabled>В избранное</button>
                                 </div>
                             </div>
                         </div>
@@ -111,14 +177,102 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form th:action="@{/blog/addRecord}" th:object="${string}" method="post">
-                    <div class="input-group mb-2">
-                        <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2" th:field="*{text}" autocomplete="off">
-                    </div>
-                    <div class="d-grid d-md-flex justify-content-md-end">
-                        <button class="btn btn-outline-primary" type="submit">Сохранить</button>
-                    </div>
-                </form>
+
+                <div th:if="${bool.sub}">
+                    <form th:action="@{/blog/addRecord}" th:object="${string}" method="post">
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2" th:field="*{text}" autocomplete="off">
+                        </div>
+                        <div class="d-grid d-md-flex justify-content-md-end">
+                            <button class="btn btn-outline-primary" type="submit">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div th:if="${bool.rec}">
+                    <form th:action="@{/blog/addRecord}" th:object="${string}" method="post">
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2" th:field="*{text}" autocomplete="off">
+                        </div>
+                        <div class="d-grid d-md-flex justify-content-md-end">
+                            <button class="btn btn-outline-primary" type="submit">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div th:if="${bool.like}">
+                    <form th:action="@{/blog/addRecord?link=likeRecord}" th:object="${string}" method="post">
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2" th:field="*{text}" autocomplete="off">
+                        </div>
+                        <div class="d-grid d-md-flex justify-content-md-end">
+                            <button class="btn btn-outline-primary" type="submit">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div th:if="${bool.fav}">
+                    <form th:action="@{/blog/addRecord?link=favRecord}" th:object="${string}" method="post">
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2" th:field="*{text}" autocomplete="off">
+                        </div>
+                        <div class="d-grid d-md-flex justify-content-md-end">
+                            <button class="btn btn-outline-primary" type="submit">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div th:if="${bool.myRecord}">
+                    <form th:action="@{/blog/addRecord?link=userRecord}" th:object="${string}" method="post">
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2" th:field="*{text}" autocomplete="off">
+                        </div>
+                        <div class="d-grid d-md-flex justify-content-md-end">
+                            <button class="btn btn-outline-primary" type="submit">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div th:if="${bool.userRecord}">
+                    <form th:action="@{/blog/addRecord?link=userRecord}" th:object="${string}" method="post">
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2" th:field="*{text}" autocomplete="off">
+                        </div>
+                        <div class="d-grid d-md-flex justify-content-md-end">
+                            <button class="btn btn-outline-primary" type="submit">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mesModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mesModalLabel">Уведомления:</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <tr th:each="n: ${notice}">
+                        <td>
+                            <figure>
+                                <blockquote class="blockquote" th:text="${n.text}"></blockquote>
+                                <figcaption class="blockquote-footer" th:text="${n.date}"></figcaption>
+                            </figure>
+                            <div th:if="${n.like}">
+                                <span class="d-inline-block text-truncate" style="max-width: 150px;" th:text="${n.record}"></span>
+                            </div>
+                            <div th:if="${n.comm}">
+                                <span class="d-inline-block text-truncate" style="max-width: 150px;" th:text="${n.record}"></span>
+                                <span class="d-inline-block text-truncate" style="max-width: 150px;" th:text="${n.commText}"></span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>

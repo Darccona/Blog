@@ -28,6 +28,12 @@ public class UserEntity {
     @Column(name = "LIKERECORD")
     private ArrayList<Long> like;
 
+    @Column(name = "FAVRECORD")
+    private ArrayList<Long> fav;
+
+//    @Column(name = "NOTICE")
+//    private ArrayList<NoticeEntity> notice;
+
     public UserEntity() {}
     public UserEntity(String name, String password) {
         this.name = name;
@@ -35,6 +41,8 @@ public class UserEntity {
         this.role = "USER";
         this.sub = new ArrayList<>();
         this.like = new ArrayList<>();
+        this.fav = new ArrayList<>();
+//        this.notice = new ArrayList<>();
     }
 
     public void setName(String name) {
@@ -80,6 +88,29 @@ public class UserEntity {
         getLikeRecord().remove(id);
     }
 
+    public void setFavRecord(Long id) {
+        this.fav.add(id);
+    }
+    public ArrayList<Long> getFavRecord() {
+        return fav;
+    }
+    public void removeFavRecord(Long id) {
+        getFavRecord().remove(id);
+    }
+
+//    public void setNotice(NoticeEntity notice) {
+//        this.notice.add(notice);
+//    }
+//    public ArrayList<NoticeEntity> getNotice() {
+//        return notice;
+//    }
+//    public void removeNotice(NoticeEntity notice) {
+//        getNotice().remove(notice);
+//    }
+//    public void removeAllNotice() {
+//        getNotice().clear();
+//    }
+
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<RecordEntity> record = new HashSet<>();
@@ -92,5 +123,19 @@ public class UserEntity {
     }
     public void removeRecord(RecordEntity record) {
         getRecord().remove(record);
+    }
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private Set<NoticeEntity> notice = new HashSet<>();
+
+    public void setNotice(Set<NoticeEntity> notice) {
+        this.notice = notice;
+    }
+    public Set<NoticeEntity> getNotice() {
+        return notice;
+    }
+    public void removeNotice(NoticeEntity notice) {
+        getNotice().remove(notice);
     }
 }

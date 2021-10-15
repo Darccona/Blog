@@ -8,15 +8,19 @@ public class RecordModel {
     private String username;
     private Date date;
     private int like;
+    private int fav;
+    private int comm;
     private Boolean likeBool;
     private Boolean favBool;
     long id;
 
-    public RecordModel(String text, String username, Date date, int like, Boolean likeBool, Boolean favBool, long id) {
+    public RecordModel(String text, String username, Date date, int like, int fav, int comm, Boolean likeBool, Boolean favBool, long id) {
         this.text = text;
         this.username = username;
         this.date = date;
         this.like = like;
+        this.fav = fav;
+        this.comm = comm;
         this.likeBool = likeBool;
         this.favBool = favBool;
         this.id = id;
@@ -48,6 +52,20 @@ public class RecordModel {
     }
     public int getLike() {
         return like;
+    }
+
+    public void setFav(int fav) {
+        this.fav = fav;
+    }
+    public int getFav() {
+        return fav;
+    }
+
+    public void setComm(int comm) {
+        this.comm = comm;
+    }
+    public int getComm() {
+        return comm;
     }
 
     public void setLikeBool(Boolean bool) {
