@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <title>Заметки</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <ul class="list-group list-group-horizontal">
+        <li class="list-group-item"><a href="/blog">Рекомендации</a></li>
+        <li class="list-group-item"><a href="/blog/likeRecord">Понравившееся</a></li>
+        <li class="list-group-item"><a href="/blog/favRecord">Избранное</a></li>
+        <li class="list-group-item"><a th:href="@{/blog/userRecord?name={n}(n=${user})}">Мои_посты</a></li>
+    </ul>
+    <div class="container-fluid">
+        <div style="float: left">
+            <a class="navbar-brand" href="#">Какой-то блог</a>
+        </div>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <ul class="navbar-nav me-auto mb-3 mb-lg-0">
+<!--                <form class="input-group mb-3" action="/notepad/search" th:object="${s}" method="post">-->
+<!--                    <input class="form-control" type="search" aria-label="Search" th:field="*{name}" autocomplete="off">-->
+<!--                    <button class="btn btn-outline-primary" type="submit">Найти</button>-->
+<!--                </form>-->
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <li class="nav-item dropstart">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="${user}"></a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal">Добавить пост</a></li>
+                            <li><a class="dropdown-item" href="#">Уведомления</a></li>
+                            <li><a class="dropdown-item" href="#">Настройки</a></li>
+                            <li><a class="dropdown-item" href="/logout">Выход</a></li>
+                        </ul>
+                    </li>
+                </div>
+            </ul>
+        </div>
+    </div>
+</nav>
+<p></p>
+
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+
+        </div>
+        <div class="col-4">
+            Рекомендуем подписаться:
+            <div class="overflow-auto">
+                <table class="table">
+                    <tr th:each="r: ${users}">
+                        <td>
+                            <a th:href="@{/blog/sub?name={s}(s=${r.text})}" th:text="${r.text}"></a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
