@@ -44,12 +44,14 @@ public class BlogController {
     public String formReg(Model model) {
         model.addAttribute("divError", false);
         model.addAttribute("reg",  new RegModel());
+
         return "registration";
     }
 
     @PostMapping("/registration")
     public String registration(@ModelAttribute("reg") RegModel reg, Model model) {
         UserEntity user = userRepository.findByName(reg.getName());
+
         if (user == null) {
             if ((reg.getName().equals("") || reg.getPassword1().equals("") || reg.getPassword2().equals(""))) {
                 model.addAttribute("divError", true);
@@ -70,6 +72,7 @@ public class BlogController {
             model.addAttribute("reg", new RegModel());
             return "registration";
         }
+
         return "redirect:/login";
     }
 
@@ -116,6 +119,7 @@ public class BlogController {
         }
         model.addAttribute("user", user.getName());
         model.addAttribute("string", new StringModel());
+
         return "blog";
     }
 
@@ -151,6 +155,7 @@ public class BlogController {
         model.addAttribute("bool", new BoolModel("like"));
         model.addAttribute("user", user.getName());
         model.addAttribute("string", new StringModel());
+
         return "blog";
     }
 
@@ -186,6 +191,7 @@ public class BlogController {
         model.addAttribute("bool", new BoolModel("fav"));
         model.addAttribute("user", user.getName());
         model.addAttribute("string", new StringModel());
+
         return "blog";
     }
 
@@ -195,6 +201,7 @@ public class BlogController {
         UserEntity user = userRepository.findByName(principal.getName());
         UserEntity userRecord = userRepository.findByName(name);
         List<RecordModel> recordList = new ArrayList<>();
+
         if (user != userRecord) {
             for (RecordEntity record : userRecord.getRecord()) {
                 recordList.add(new RecordModel(record.getText(), userRecord.getName(), record.getDate(),
@@ -232,6 +239,7 @@ public class BlogController {
 
         model.addAttribute("user", user.getName());
         model.addAttribute("string", new StringModel());
+
         return "blog";
     }
 
@@ -244,9 +252,11 @@ public class BlogController {
         record.setUser(user);
         recordRepository.save(record);
         String url = "http://localhost:8080/blog/" + link;
+
         if (link.equals("userRecord")) {
             url += "?name=" + user.getName();
         }
+
         return "redirect:" + url;
     }
 
@@ -255,6 +265,7 @@ public class BlogController {
                           Principal principal, Model model) {
         UserEntity user = userRepository.findByName(principal.getName());
         UserEntity sub = userRepository.findByName(name);
+
         if ((sub != null) && (sub != user)) {
             user.setSub(name);
             userRepository.save(user);
@@ -276,6 +287,7 @@ public class BlogController {
                           Principal principal, Model model) {
         UserEntity user = userRepository.findByName(principal.getName());
         RecordEntity record = recordRepository.findById(id);
+
         if (record != null) {
             if (!user.getLikeRecord().contains(id)) {
                 user.setLikeRecord(id);
@@ -295,9 +307,11 @@ public class BlogController {
         userRepository.save(record.getUser());
 
         String url = "http://localhost:8080/blog/" + link;
+
         if (link.equals("userRecord")) {
             url += "?name=" + record.getUser().getName();
         }
+
         return "redirect:" + url;
     }
 
@@ -307,6 +321,7 @@ public class BlogController {
                            Principal principal, Model model) {
         UserEntity user = userRepository.findByName(principal.getName());
         RecordEntity record = recordRepository.findById(id);
+
         if (record != null) {
             if (!user.getFavRecord().contains(id)) {
                 user.setFavRecord(id);
@@ -319,9 +334,11 @@ public class BlogController {
             recordRepository.save(record);
         }
         String url = "http://localhost:8080/blog/" + link;
+
         if (link.equals("userRecord")) {
             url += "?name=" + record.getUser().getName();
         }
+
         return "redirect:" + url;
     }
 }
