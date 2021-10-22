@@ -12,24 +12,20 @@ public class NoticeEntity {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
 
-    @Column(name = "TYPE")
-    private int type;
-
     @Column(name = "DATE")
     private Date date;
 
     @Column(name = "AUTHOR")
     private String author;
 
-    @Column(name = "RECORD")
+    @Column(name = "RECORD", length = 16383)
     private String record;
 
     @Column(name = "COMM")
     private String comm;
 
     public NoticeEntity() { }
-    public NoticeEntity(int type, String author, String record, String comm) {
-        this.type = type;
+    public NoticeEntity(String author, String record, String comm) {
         this.date = new Date();
         this.author = author;
         this.record = record;
@@ -41,19 +37,25 @@ public class NoticeEntity {
     }
 
     public int getType() {
-        return type;
-    }
-    public Date getDate() {
-        return date;
+        if ((comm == null) && (record == null)) {
+            return 2;
+        } else if (comm == null) {
+            return 1;
+        } else {
+            return 3;
+        }
     }
     public String getText() {
-        if (type == 1) {
-            return "Пользователю " + author + " понравилась Ваша запись:";
-        } else if (type == 2) {
+        if ((comm == null) && (record == null)) {
             return "Пользователь " + author + " подписался на Вас.";
+        } else if (comm == null) {
+            return "Пользователю " + author + " понравилась Ваша запись:";
         } else {
             return "Пользователь " + author + " оставил комментарий под Вашей записью:";
         }
+    }
+    public Date getDate() {
+        return date;
     }
     public String getRecord() {
         return record;

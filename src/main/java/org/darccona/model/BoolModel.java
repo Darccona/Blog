@@ -1,38 +1,27 @@
 package org.darccona.model;
 
 public class BoolModel {
-    private boolean sub = false;
-
-    private boolean rec = false;
-    private boolean like = false;
-    private boolean fav = false;
+    private boolean login = true;
+    private boolean empty = false;
 
     private boolean myRecord = false;
     private boolean userRecord = false;
 
     public BoolModel(String div) {
         switch (div) {
-            case "sub": this.sub = true; break;
-            case "rec": this.rec = true; break;
-            case "like": this.like = true; break;
-            case "fav": this.fav = true; break;
+            case "login": this.login = false; break;
+            case "isEmpty": this.empty = true; break;
+
             case "myRecord": this.myRecord = true; break;
             case "userRecord": this.userRecord = true; break;
         }
     }
 
-    public boolean getSub() {
-        return sub;
+    public boolean getLogin() {
+        return login;
     }
-
-    public boolean getRec() {
-        return rec;
-    }
-    public boolean getLike() {
-        return like;
-    }
-    public boolean getFav() {
-        return fav;
+    public boolean getEmpty() {
+        return empty;
     }
 
     public boolean getMyRecord() {
