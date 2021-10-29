@@ -1,5 +1,6 @@
 package org.darccona.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -11,7 +12,9 @@ public class RecordModel {
     private int comm;
     private Boolean likeBool;
     private Boolean favBool;
+
     long id;
+    private SimpleDateFormat format = new SimpleDateFormat("dd.MM.yy HH:mm");
 
     public RecordModel(String text, String username, Date date, int like, int comm, Boolean likeBool, Boolean favBool, long id) {
         this.text = text;
@@ -41,8 +44,8 @@ public class RecordModel {
     public void setDate(Date date) {
         this.date = date;
     }
-    public Date getDate() {
-        return date;
+    public String getDate() {
+        return format.format(date);
     }
 
     public void setLike(int like) {

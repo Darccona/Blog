@@ -18,14 +18,14 @@ public class NoticeEntity {
     @Column(name = "AUTHOR")
     private String author;
 
-    @Column(name = "RECORD", length = 16383)
-    private String record;
+    @Column(name = "RECORD")
+    private long record;
 
     @Column(name = "COMM")
     private String comm;
 
     public NoticeEntity() { }
-    public NoticeEntity(String author, String record, String comm) {
+    public NoticeEntity(String author, long record, String comm) {
         this.date = new Date();
         this.author = author;
         this.record = record;
@@ -37,7 +37,7 @@ public class NoticeEntity {
     }
 
     public int getType() {
-        if ((comm == null) && (record == null)) {
+        if ((comm == null) && (record == -1)) {
             return 2;
         } else if (comm == null) {
             return 1;
@@ -46,7 +46,7 @@ public class NoticeEntity {
         }
     }
     public String getText() {
-        if ((comm == null) && (record == null)) {
+        if ((comm == null) && (record == -1)) {
             return "Пользователь " + author + " подписался на Вас.";
         } else if (comm == null) {
             return "Пользователю " + author + " понравилась Ваша запись:";
@@ -54,10 +54,13 @@ public class NoticeEntity {
             return "Пользователь " + author + " оставил комментарий под Вашей записью:";
         }
     }
+    public String getAuthor() {
+        return author;
+    }
     public Date getDate() {
         return date;
     }
-    public String getRecord() {
+    public long getRecord() {
         return record;
     }
     public String getComm() {

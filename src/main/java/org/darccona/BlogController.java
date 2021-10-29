@@ -25,6 +25,8 @@ public class BlogController {
     @Autowired
     RecordRepository recordRepository;
     @Autowired
+    CommentRepository commentRepository;
+    @Autowired
     NoticeRepository noticeRepository;
     @Autowired
     SubscribeRepository subscribeRepository;
@@ -85,7 +87,6 @@ public class BlogController {
         return "redirect:http://localhost:8080/login";
     }
 
-
     public ArrayList<NavModel> setNav(String name, String user) {
         ArrayList<NavModel> nav = new ArrayList<>();
         nav.add(new NavModel("/blog", "Рекомендации"));
@@ -130,7 +131,12 @@ public class BlogController {
 
         List<NoticeModel> noticeList = new ArrayList<>();
         for (NoticeEntity notice: user.getNotice()) {
-            noticeList.add(new NoticeModel(notice.getText(), notice.getRecord(), notice.getComm(), notice.getDate(), notice.getType()));
+            RecordEntity recordNotice = recordRepository.findById(notice.getRecord());
+            if (recordNotice != null) {
+                noticeList.add(new NoticeModel(notice.getText(), recordNotice.getText(), notice.getComm(), notice.getDate(), notice.getType(), notice.getId()));
+            } else {
+                noticeList.add(new NoticeModel(notice.getText(), "*Пост удалён*", notice.getComm(), notice.getDate(), notice.getType(), notice.getId()));
+            }
         }
         Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
         model.addAttribute("notice", noticeList);
@@ -184,7 +190,12 @@ public class BlogController {
 
         List<NoticeModel> noticeList = new ArrayList<>();
         for (NoticeEntity notice: user.getNotice()) {
-            noticeList.add(new NoticeModel(notice.getText(), notice.getRecord(), notice.getComm(), notice.getDate(), notice.getType()));
+            RecordEntity recordNotice = recordRepository.findById(notice.getRecord());
+            if (recordNotice != null) {
+                noticeList.add(new NoticeModel(notice.getText(), recordNotice.getText(), notice.getComm(), notice.getDate(), notice.getType(), notice.getId()));
+            } else {
+                noticeList.add(new NoticeModel(notice.getText(), "*Пост удалён*", notice.getComm(), notice.getDate(), notice.getType(), notice.getId()));
+            }
         }
         Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
         model.addAttribute("notice", noticeList);
@@ -232,7 +243,12 @@ public class BlogController {
 
         List<NoticeModel> noticeList = new ArrayList<>();
         for (NoticeEntity notice: user.getNotice()) {
-            noticeList.add(new NoticeModel(notice.getText(), notice.getRecord(), notice.getComm(), notice.getDate(), notice.getType()));
+            RecordEntity recordNotice = recordRepository.findById(notice.getRecord());
+            if (recordNotice != null) {
+                noticeList.add(new NoticeModel(notice.getText(), recordNotice.getText(), notice.getComm(), notice.getDate(), notice.getType(), notice.getId()));
+            } else {
+                noticeList.add(new NoticeModel(notice.getText(), "*Пост удалён*", notice.getComm(), notice.getDate(), notice.getType(), notice.getId()));
+            }
         }
         Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
         model.addAttribute("notice", noticeList);
@@ -289,10 +305,6 @@ public class BlogController {
             }
         }
 
-
-
-
-
         List<UserModel> userList = new ArrayList<>();
         for (UserEntity users : userRepository.findAll()) {
             if ((users != user) && (subscribeRepository.findByUserAndName(user, users.getName())==null)) {
@@ -303,7 +315,12 @@ public class BlogController {
 
         List<NoticeModel> noticeList = new ArrayList<>();
         for (NoticeEntity notice: user.getNotice()) {
-            noticeList.add(new NoticeModel(notice.getText(), notice.getRecord(), notice.getComm(), notice.getDate(), notice.getType()));
+            RecordEntity recordNotice = recordRepository.findById(notice.getRecord());
+            if (recordNotice != null) {
+                noticeList.add(new NoticeModel(notice.getText(), recordNotice.getText(), notice.getComm(), notice.getDate(), notice.getType(), notice.getId()));
+            } else {
+                noticeList.add(new NoticeModel(notice.getText(), "*Пост удалён*", notice.getComm(), notice.getDate(), notice.getType(), notice.getId()));
+            }
         }
         Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
         model.addAttribute("notice", noticeList);
@@ -349,15 +366,28 @@ public class BlogController {
 
         List<NoticeModel> noticeList = new ArrayList<>();
         for (NoticeEntity notice: user.getNotice()) {
-            noticeList.add(new NoticeModel(notice.getText(), notice.getRecord(), notice.getComm(), notice.getDate(), notice.getType()));
+            RecordEntity recordNotice = recordRepository.findById(notice.getRecord());
+            if (recordNotice != null) {
+                noticeList.add(new NoticeModel(notice.getText(), recordNotice.getText(), notice.getComm(), notice.getDate(), notice.getType(), notice.getId()));
+            } else {
+                noticeList.add(new NoticeModel(notice.getText(), "*Пост удалён*", notice.getComm(), notice.getDate(), notice.getType(), notice.getId()));
+            }
         }
         Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
         model.addAttribute("notice", noticeList);
         model.addAttribute("num", user.getNotice().size());
 
+        List<CommModel> commList = new ArrayList<>();
+        for (CommentEntity comm : record.getComment()) {
+            commList.add(new CommModel(comm.getName(), comm.getText(), comm.getDate(), 0));
+        }
+        Collections.sort(commList, CommModel.COMPARE_BY_DATE_NEW);
+        model.addAttribute("comm", commList);
+
         model.addAttribute("nav", setNav("", user.getName()));
         model.addAttribute("link", "userRecord/record?id=" + id);
         model.addAttribute("user", user.getName());
+        model.addAttribute("commString", new StringModel());
         model.addAttribute("string", new StringModel());
         model.addAttribute("editString", new StringModel(record.getText()));
 
@@ -415,6 +445,25 @@ public class BlogController {
         return "redirect:" + url;
     }
 
+    @GetMapping("/blog/delMes")
+    public String mesDel(@RequestParam(value = "id") long id,
+                            Principal principal, Model model) {
+        UserEntity user = userRepository.findByName(principal.getName());
+        NoticeEntity notice = noticeRepository.findById(id);
+        String url = "http://localhost:8080/blog/";
+
+        if (notice.getType() == 2) {
+            url += "userRecord?name=" + notice.getAuthor();
+        } else {
+            url += "userRecord/record?id=" + notice.getRecord();
+        }
+
+        user.removeNotice(notice);
+        userRepository.save(user);
+
+        return "redirect:" + url;
+    }
+
     @GetMapping("/blog/delAllMes")
     public String mesAllDel(@RequestParam(value = "link", required = false, defaultValue = "") String link,
                             Principal principal, Model model) {
@@ -438,7 +487,7 @@ public class BlogController {
             subscribe.setUser(user);
             subscribeRepository.save(subscribe);
 
-            NoticeEntity notice = new NoticeEntity(user.getName(), null, null);
+            NoticeEntity notice = new NoticeEntity(user.getName(), -1, null);
             notice.setUser(sub);
             noticeRepository.save(notice);
         }
@@ -463,7 +512,7 @@ public class BlogController {
                 record.setLike();
                 recordRepository.save(record);
 
-                NoticeEntity notice = new NoticeEntity(user.getName(), record.getText(), null);
+                NoticeEntity notice = new NoticeEntity(user.getName(), id, null);
                 notice.setUser(record.getUser());
                 noticeRepository.save(notice);
             } else {
@@ -497,6 +546,32 @@ public class BlogController {
                 user.removeFavorite(favorite);
                 userRepository.save(user);
             }
+        }
+
+        String url = "http://localhost:8080/blog/" + link;
+
+        return "redirect:" + url;
+    }
+
+    @PostMapping("/blog/comm")
+    public String userComm(@ModelAttribute("commString") StringModel string,
+                           @RequestParam(value = "id") long id,
+                          @RequestParam(value = "link", required = false, defaultValue = "") String link,
+                          Principal principal, Model model) {
+        UserEntity user = userRepository.findByName(principal.getName());
+        RecordEntity record = recordRepository.findById(id);
+
+        if (record != null) {
+            CommentEntity comment = new CommentEntity(user.getName(), string.getText());
+            comment.setRecord(record);
+            commentRepository.save(comment);
+
+            record.setComm();
+            recordRepository.save(record);
+
+            NoticeEntity notice = new NoticeEntity(user.getName(), id, string.getText());
+            notice.setUser(record.getUser());
+            noticeRepository.save(notice);
         }
 
         String url = "http://localhost:8080/blog/" + link;

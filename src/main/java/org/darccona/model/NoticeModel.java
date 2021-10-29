@@ -1,5 +1,6 @@
 package org.darccona.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -14,12 +15,14 @@ public class NoticeModel {
     private Date date;
 
     long id;
+    private SimpleDateFormat format = new SimpleDateFormat("dd.MM.yy HH:mm");
 
-    public NoticeModel(String text, String record, String comm, Date date, int type) {
+    public NoticeModel(String text, String record, String comm, Date date, int type, long id) {
         this.text = text;
         this.record = record;
         this.commText = comm;
         this.date = date;
+        this.id = id;
 
         switch (type) {
             case 1: this.like = true; break;
@@ -37,8 +40,8 @@ public class NoticeModel {
     public String getCommText() {
         return commText;
     }
-    public Date getDate() {
-        return date;
+    public String getDate() {
+        return format.format(date);
     }
 
     public Boolean getLike() {

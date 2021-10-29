@@ -139,22 +139,24 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <table class="table">
-                    <tr th:each="n: ${notice}">
-                        <td>
-                            <figure>
-                                <blockquote class="blockquote" th:text="${n.text}"></blockquote>
-                                <figcaption class="blockquote-footer" th:text="${n.date}"></figcaption>
-                            </figure>
-                            <div th:if="${n.like}">
-                                <span class="d-inline-block text-truncate" style="max-width: 400px;" th:text="${n.record}"></span>
-                            </div>
-                            <div th:if="${n.comm}">
-                                <span class="d-inline-block text-truncate" style="max-width: 400px;" th:text="${n.commText}"></span>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
+                <ul class="list-group">
+                    <table class="table">
+                        <tr th:each="n: ${notice}">
+                            <a class="list-group-item" th:href="@{/blog/delMes?id={i}(i=${n.id})}">
+                                <figure>
+                                    <blockquote class="blockquote" th:text="${n.text}"></blockquote>
+                                    <figcaption class="blockquote-footer" th:text="${n.date}"></figcaption>
+                                </figure>
+                                <div th:if="${n.like}">
+                                    <span class="d-inline-block text-truncate" style="max-width: 400px;" th:text="${n.record}"></span>
+                                </div>
+                                <div th:if="${n.comm}">
+                                    <span class="d-inline-block text-truncate" style="max-width: 400px;" th:text="${n.commText}"></span>
+                                </div>
+                            </a>
+                        </tr>
+                    </table>
+                </ul>
             </div>
             <div class="modal-footer">
                 <a type="button" class="btn btn-primary" th:href="@{/blog/delAllMes?link={l}(l=${link})}">Всё прочитано</a>

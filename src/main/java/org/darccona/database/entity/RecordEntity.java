@@ -1,8 +1,12 @@
 package org.darccona.database.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class RecordEntity {
@@ -13,7 +17,7 @@ public class RecordEntity {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
 
-    @Column(name = "TEXT")
+    @Column(name = "TEXT", length = 16383)
     private String text;
 
     @Column(name = "DATE")
@@ -80,5 +84,19 @@ public class RecordEntity {
     }
     public UserEntity getUser() {
         return user;
+    }
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "record", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private Set<CommentEntity> comment = new HashSet<>();
+
+    public void setComment(Set<CommentEntity> comment) {
+        this.comment = comment;
+    }
+    public Set<CommentEntity> getComment() {
+        return comment;
+    }
+    public void removeComment(CommentEntity comment) {
+        getComment().remove(comment);
     }
 }
