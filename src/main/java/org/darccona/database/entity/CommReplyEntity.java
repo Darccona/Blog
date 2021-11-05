@@ -1,15 +1,10 @@
 package org.darccona.database.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
-public class CommentEntity {
-
+public class CommReplyEntity {
     @Id
 
     @Column(name = "ID")
@@ -22,13 +17,17 @@ public class CommentEntity {
     @Column(name = "TEXT")
     private String text;
 
+    @Column(name = "COMMID")
+    private long commId;
+
     @Column(name = "DATE")
     private Date date;
 
-    public CommentEntity() {}
-    public CommentEntity(String name, String text) {
+    public CommReplyEntity() {}
+    public CommReplyEntity(String name, String text, long commId) {
         this.name = name;
         this.text = text;
+        this.commId = commId;
         date = new Date();
     }
 
@@ -50,6 +49,13 @@ public class CommentEntity {
         return text;
     }
 
+    public void setCommId(long id) {
+        commId = id;
+    }
+    public long getCommId() {
+        return commId;
+    }
+
     public void setDate(Date date) {
         this.date = date;
     }
@@ -58,27 +64,13 @@ public class CommentEntity {
     }
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "record", nullable = false)
-    private RecordEntity record;
+    @JoinColumn(name = "comment", nullable = false)
+    private CommentEntity comment;
 
-    public void setRecord(RecordEntity record) {
-        this.record = record;
+    public void setComment(CommentEntity comment) {
+        this.comment = comment;
     }
-    public RecordEntity getRecord() {
-        return record;
-    }
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<CommReplyEntity> commReply = new HashSet<>();
-
-    public void setCommReply(Set<CommReplyEntity> comment) {
-        this.commReply = comment;
-    }
-    public Set<CommReplyEntity> getCommReply() {
-        return commReply;
-    }
-    public void removeCommReply(CommReplyEntity comment) {
-        getCommReply().remove(comment);
+    public CommentEntity getComment() {
+        return comment;
     }
 }

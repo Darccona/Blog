@@ -24,34 +24,31 @@ public class NoticeEntity {
     @Column(name = "COMM")
     private String comm;
 
+    @Column(name = "TYPE")
+    private int type;
+
     public NoticeEntity() { }
-    public NoticeEntity(String author, long record, String comm) {
+    public NoticeEntity(String author, long record, String comm, int type) {
         this.date = new Date();
         this.author = author;
         this.record = record;
         this.comm = comm;
+        this.type = type;
     }
 
     public long getId() {
         return id;
     }
 
-    public int getType() {
-        if ((comm == null) && (record == -1)) {
-            return 2;
-        } else if (comm == null) {
-            return 1;
-        } else {
-            return 3;
-        }
-    }
     public String getText() {
-        if ((comm == null) && (record == -1)) {
+        if (type == 1) {
             return "Пользователь " + author + " подписался на Вас.";
-        } else if (comm == null) {
+        } else if (type == 2) {
             return "Пользователю " + author + " понравилась Ваша запись:";
-        } else {
+        } else if (type == 3) {
             return "Пользователь " + author + " оставил комментарий под Вашей записью:";
+        } else {
+            return "Пользователь " + author + " ответил на Ваш комментарий:";
         }
     }
     public String getAuthor() {
@@ -65,6 +62,9 @@ public class NoticeEntity {
     }
     public String getComm() {
         return comm;
+    }
+    public int getType() {
+        return type;
     }
 
     @ManyToOne(fetch = FetchType.EAGER)

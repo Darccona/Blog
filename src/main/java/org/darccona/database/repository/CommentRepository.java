@@ -7,8 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface CommentRepository extends CrudRepository<CommentEntity, Long> {
-
     CommentEntity findById(long id);
-    List<CommentEntity> findByRecord(RecordEntity record);
-
 }
