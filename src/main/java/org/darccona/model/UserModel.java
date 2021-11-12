@@ -1,16 +1,29 @@
 package org.darccona.model;
 
 public class UserModel {
-    private String text;
+    private String name;
+    private String description;
 
-    public UserModel(String text) {
-        this.text = text;
+    public UserModel(String name) {
+        this.name = name;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public UserModel(String name, String description) {
+        this.name = name;
+        this.description = description;
     }
-    public String getText() {
-        return text;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getName() {
+        return name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public String getDescription() {
+        return description;
     }
 }

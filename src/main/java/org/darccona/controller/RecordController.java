@@ -58,7 +58,8 @@ public class RecordController {
             model.addAttribute("bool", new BoolModel("userRecord"));
         }
 
-        RecordModel rec = new RecordModel(record.getText(), record.getUser().getName(), record.getDate(),
+        String[] text = record.getText().split("\n");
+        RecordModel rec = new RecordModel(text, record.getUser().getName(), record.getDate(),
                 record.getLike(), record.getComm(),
                 likeRepository.findByUserAndRecord(user, record.getId())!=null,
                 favoriteRepository.findByUserAndRecord(user, record.getId())!=null,
@@ -122,7 +123,7 @@ public class RecordController {
 
         model.addAttribute("nav", setNav(user.getName()));
 
-        model.addAttribute("user", new UserModel(user.getName()));
+        model.addAttribute("user", new UserModel(user.getName(), user.getDescription()));
         model.addAttribute("link", link);
         model.addAttribute("newRecord", new StringModel());
         model.addAttribute("editRecord", new StringModel(record.getText()));

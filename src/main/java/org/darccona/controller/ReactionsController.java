@@ -31,18 +31,25 @@ public class ReactionsController {
                           Principal principal, Model model) {
         UserEntity user = userRepository.findByName(principal.getName());
         UserEntity sub = userRepository.findByName(name);
+        SubscribeEntity subscribe = subscribeRepository.findByUserAndName(user, sub.getName());
 
         if ((sub != null) && (sub != user)) {
-            SubscribeEntity subscribe = new SubscribeEntity(name);
-            subscribe.setUser(user);
-            subscribeRepository.save(subscribe);
 
-            NoticeEntity notice = new NoticeEntity(user.getName(), -1, null, 1);
-            notice.setUser(sub);
-            noticeRepository.save(notice);
+            if (subscribe != null) {
+                user.removeSubscribe(subscribe);
+                userRepository.save(user);
+            } else {
+                SubscribeEntity subscribe1 = new SubscribeEntity(name);
+                subscribe1.setUser(user);
+                subscribeRepository.save(subscribe1);
+
+                NoticeEntity notice = new NoticeEntity(user.getName(), -1, null, 1);
+                notice.setUser(sub);
+                noticeRepository.save(notice);
+            }
         }
 
-        return "redirect:/blog";
+        return "redirect:/blog/userRecord?name=" + sub.getName();
     }
 
     @GetMapping("/blog/like")

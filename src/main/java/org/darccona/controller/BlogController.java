@@ -86,7 +86,8 @@ public class BlogController {
         List<RecordModel> recordList = new ArrayList<>();
         for (SubscribeEntity sub : user.getSubscribe()) {
             for (RecordEntity record : recordRepository.findByUser(userRepository.findByName(sub.getName()))) {
-                recordList.add(new RecordModel(record.getText(), sub.getName(), record.getDate(),
+                String[] text = record.getText().split("\n");
+                recordList.add(new RecordModel(text, sub.getName(), record.getDate(),
                         record.getLike(), record.getComm(),
                         likeRepository.findByUserAndRecord(user, record.getId())!=null,
                         favoriteRepository.findByUserAndRecord(user, record.getId())!=null,
@@ -121,7 +122,8 @@ public class BlogController {
         for (LikeEntity like : user.getLike()) {
             RecordEntity record = recordRepository.findById(like.getRecord());
             if (record != null) {
-                recordList.add(new RecordModel(record.getText(), record.getUser().getName(), record.getDate(),
+                String[] text = record.getText().split("\n");
+                recordList.add(new RecordModel(text, record.getUser().getName(), record.getDate(),
                         record.getLike(), record.getComm(),
                         true, favoriteRepository.findByUserAndRecord(user, record.getId()) != null,
                         record.getId()));
@@ -156,7 +158,8 @@ public class BlogController {
         for (FavoriteEntity favorite : user.getFavorite()) {
             RecordEntity record = recordRepository.findById(favorite.getRecord());
             if (record != null) {
-                recordList.add(new RecordModel(record.getText(), record.getUser().getName(), record.getDate(),
+                String[] text = record.getText().split("\n");
+                recordList.add(new RecordModel(text, record.getUser().getName(), record.getDate(),
                         record.getLike(), record.getComm(),
                         likeRepository.findByUserAndRecord(user, record.getId()) != null, true,
                         record.getId()));
@@ -193,7 +196,8 @@ public class BlogController {
         if (user != userRecord) {
             model.addAttribute("nav", setNav("", user.getName()));
             for (RecordEntity record : userRecord.getRecord()) {
-                recordList.add(new RecordModel(record.getText(), userRecord.getName(), record.getDate(),
+                String[] text = record.getText().split("\n");
+                recordList.add(new RecordModel(text, userRecord.getName(), record.getDate(),
                         record.getLike(), record.getComm(),
                         likeRepository.findByUserAndRecord(user, record.getId())!=null,
                         favoriteRepository.findByUserAndRecord(user, record.getId())!=null,
@@ -203,15 +207,20 @@ public class BlogController {
             if (recordList.size() != 0) {
                 Collections.sort(recordList, RecordModel.COMPARE_BY_DATE);
                 model.addAttribute("record", recordList);
-                model.addAttribute("bool", new BoolModel("userRecord"));
             } else {
                 model.addAttribute("bool", new BoolModel("isEmpty"));
                 model.addAttribute("message", "Этот пользователь ещё ничего не постил.");
             }
+
+            model.addAttribute("subscribe", (subscribeRepository.findByUserAndName(user, userRecord.getName()) != null));
+            model.addAttribute("userRecord", new UserModel(userRecord.getName(), userRecord.getDescription()));
+            model.addAttribute("user", new UserModel(user.getName()));
+            model.addAttribute("bool", new BoolModel("userRecord"));
         } else {
             model.addAttribute("nav", setNav("user", user.getName()));
             for (RecordEntity record : userRecord.getRecord()) {
-                recordList.add(new RecordModel(record.getText(), userRecord.getName(), record.getDate(),
+                String[] text = record.getText().split("\n");
+                recordList.add(new RecordModel(text, userRecord.getName(), record.getDate(),
                         record.getLike(), record.getComm(),
                         false,false, record.getId()));
             }
@@ -219,18 +228,19 @@ public class BlogController {
             if (recordList.size() != 0) {
                 Collections.sort(recordList, RecordModel.COMPARE_BY_DATE);
                 model.addAttribute("record", recordList);
-                model.addAttribute("bool", new BoolModel("myRecord"));
             } else {
                 model.addAttribute("bool", new BoolModel("isEmpty"));
                 model.addAttribute("message", "Вы ещё ничего не постили.");
             }
+
+            model.addAttribute("user", new UserModel(user.getName(), user.getDescription()));
+            model.addAttribute("bool", new BoolModel("myRecord"));
         }
 
         model.addAttribute("link", "userRecord?name=" + userRecord.getName());
         model.addAttribute("users", setUserList(user));
         model.addAttribute("notice", setNoticeList(user));
         model.addAttribute("num", user.getNotice().size());
-        model.addAttribute("user", new UserModel(user.getName()));
         model.addAttribute("string", new StringModel());
 
         return "blog";

@@ -31,16 +31,42 @@
             <ul class="navbar-nav me-auto mb-3 mb-lg-0">
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <li class="nav-item dropstart">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="${user.text}"></a>
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="${user.name}"></a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#recordModal">Добавить пост</a></li>
                             <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#mesModal">Уведомления<span class="badge bg-primary" th:text="${num}"></span></a></li>
-                            <li><a class="dropdown-item" href="#">Настройки</a></li>
+                            <li><a class="dropdown-item" href="/blog/settingUser">Настройки</a></li>
                             <li><a class="dropdown-item" href="/logout">Выход</a></li>
                         </ul>
                     </li>
                 </div>
             </ul>
+        </div>
+    </div>
+</nav>
+
+<nav>
+    <div class="container">
+        <div th:if="${bool.myRecord}">
+            <div class="col-6 align-self-center">
+                <h3 th:text="${user.name}"></h3>
+                <h5 th:text="${user.description}"></h5>
+            </div>
+        </div>
+
+        <div th:if="${bool.userRecord}">
+            <div class="col-6 align-self-center">
+                <h3 th:text="${userRecord.name}"></h3>
+                <h5 th:text="${userRecord.description}"></h5>
+            </div>
+            <div class="col-4">
+                <div th:if="not ${subscribe}">
+                    <a class="btn btn-outline-primary" th:href="@{/blog/sub?name={s}(s=${userRecord.name})}">Подписаться</a>
+                </div>
+                <div th:if="${subscribe}">
+                    <a class="btn btn-primary" th:href="@{/blog/sub?name={s}(s=${userRecord.name})}">Вы подписаны</a>
+                </div>
+            </div>
         </div>
     </div>
 </nav>
@@ -52,7 +78,6 @@
             <div th:if="${bool.empty}">
                 <h4 th:text="${message}"></h4>
             </div>
-            <table class="table">
 
                 <div class="shadow-sm p-3 mb-5 bg-body rounded">
                     <form th:action="@{/blog/addRecord?link={l}(l=${link})}" th:object="${string}" method="post">
@@ -71,11 +96,16 @@
                             <blockquote class="blockquote"><a th:href="@{/blog/userRecord?name={n}(n=${r.username})}" th:text="${r.username}"></a></blockquote>
                             <figcaption class="blockquote-footer" th:text="${r.date}"></figcaption>
                         </figure>
-                        <div class="mb-3">
-                            <textarea class="form-control" th:text="*{r.text}" rows="5" readonly></textarea>
+
+                        <div th:if="${r.boolText}">
+                            <table class="table">
+                                <tr th:each="s: ${r.text}">
+                                    <p class="lh-1" th:text="${s}"></p>
+                                </tr>
+                            </table>
                         </div>
 
-                        <a class="btn btn-outline-primary" type="button" th:href="@{/blog/userRecord/record?id={i}(i=${r.id})}" th:text="'Открыть комментарии ('+ ${r.comm} +')'"></a>
+                        <a class="btn btn-outline-primary" type="button" th:href="@{/blog/userRecord/record?id={i}(i=${r.id})}" th:text="'Комментарии ('+ ${r.comm} +')'"></a>
                         <div th:if="not ${bool.myRecord}">
                             <div class="d-md-flex justify-content-md-end">
                                 <div th:if="${r.likeBool}">
@@ -95,22 +125,21 @@
 
                         <div th:if="${bool.myRecord}">
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <button type="button" class="btn btn-outline-primary me-md-2" disabled>Нравится</button>
+                                <button type="button" class="btn btn-outline-primary me-md-2" disabled th:text="'Нравиться ('+ ${r.like} +')'"></button>
                                 <button type="button" class="btn btn-outline-primary me-md-2" disabled>В избранное</button>
                             </div>
                         </div>
                     </div>
                 </tr>
-            </table>
         </div>
 
         <div class="col-4">
             Рекомендуем подписаться:
             <div class="overflow-auto">
                 <table class="table">
-                    <tr th:each="r: ${users}">
+                    <tr th:each="u: ${users}">
                         <td>
-                            <a th:href="@{/blog/sub?name={s}(s=${r.text})}" th:text="${r.text}"></a>
+                            <a th:href="@{/blog/userRecord?name={s}(s=${u.name})}" th:text="${u.name}"></a>
                         </td>
                     </tr>
                 </table>

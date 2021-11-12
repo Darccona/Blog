@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.Date;
 
 public class RecordModel {
-    private String text;
+    private String[] text;
     private String username;
     private Date date;
     private int like;
@@ -16,7 +16,7 @@ public class RecordModel {
     long id;
     private SimpleDateFormat format = new SimpleDateFormat("dd.MM.yy HH:mm");
 
-    public RecordModel(String text, String username, Date date, int like, int comm, Boolean likeBool, Boolean favBool, long id) {
+    public RecordModel(String[] text, String username, Date date, int like, int comm, Boolean likeBool, Boolean favBool, long id) {
         this.text = text;
         this.username = username;
         this.date = date;
@@ -27,11 +27,18 @@ public class RecordModel {
         this.id = id;
     }
 
-    public void setText(String text) {
+    public void setText(String[] text) {
         this.text = text;
     }
-    public String getText() {
+    public String[] getText() {
         return text;
+    }
+
+    public boolean getBoolText() {
+        return (text != null);
+    }
+    public boolean getBoolImage() {
+        return false;
     }
 
     public void setUsername(String username) {

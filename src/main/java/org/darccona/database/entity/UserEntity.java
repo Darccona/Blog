@@ -20,11 +20,19 @@ public class UserEntity {
     @Column(name = "ROLE")
     private String role;
 
+    @Column(name = "DESCRIPTION")
+    private String description;
+
+    @Column(name = "CLOSED")
+    private boolean closed;
+
     public UserEntity() {}
     public UserEntity(String name, String password) {
         this.name = name;
         this.password = password;
         this.role = "USER";
+        this.description = "";
+        this.closed = false;
     }
 
     public void setName(String name) {
@@ -46,6 +54,20 @@ public class UserEntity {
     }
     public String getRole() {
         return role;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public String getDescription() {
+        return description;
+    }
+
+    public void setClosed(boolean closed) {
+        this.closed = closed;
+    }
+    public boolean getClosed() {
+        return closed;
     }
 
     @JsonIgnore
