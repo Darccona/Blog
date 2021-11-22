@@ -23,10 +23,10 @@ public class SecurityController {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @GetMapping("/")
-    public String start(Model model) {
-        return "redirect:http://localhost:8080/blog";
-    }
+//    @GetMapping("/")
+//    public String start(Model model) {
+//        return "redirect:http://localhost:8080/blog";
+//    }
 
     @GetMapping("/registration")
     public String formReg(Model model) {

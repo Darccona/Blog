@@ -25,22 +25,39 @@
 
     <div class="container-fluid">
         <div style="float: left">
-            <a class="navbar-brand" href="#">Какой-то блог</a>
+            <div th:if="${userRecord}">
+                <a class="navbar-brand" href="#" th:text="${userRecord.nameBlog}"></a>
+            </div>
+            <div th:if="${myRecord}">
+                <a class="navbar-brand" href="#" th:text="${userRecord.nameBlog}"></a>
+            </div>
+            <div th:if="not ${userRecord}">
+                <div th:if="not ${myRecord}">
+                    <a class="navbar-brand" href="#">Какой-то блог</a>
+                </div>
+            </div>
         </div>
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <ul class="navbar-nav me-auto mb-3 mb-lg-0">
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <li class="nav-item dropstart">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="${user.name}"></a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#recordModal">Добавить пост</a></li>
-                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#mesModal">Уведомления<span class="badge bg-primary" th:text="${num}"></span></a></li>
-                            <li><a class="dropdown-item" href="/blog/settingUser">Настройки</a></li>
-                            <li><a class="dropdown-item" href="/logout">Выход</a></li>
-                        </ul>
-                    </li>
-                </div>
-            </ul>
+            <div th:if="${principal}">
+                <ul class="navbar-nav me-auto mb-3 mb-lg-0">
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <li class="nav-item dropstart">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="${user.name}"></a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#recordModal">Добавить пост</a></li>
+                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#mesModal">Уведомления<span class="badge bg-primary" th:text="${num}"></span></a></li>
+                                <li><a class="dropdown-item" href="/blog/likeRecord">Понравившееся</a></li>
+                                <li><a class="dropdown-item" href="/blog/favRecord">Избранное</a></li>
+                                <li><a class="dropdown-item" href="/blog/settingUser">Настройки</a></li>
+                                <li><a class="dropdown-item" href="/logout">Выход</a></li>
+                            </ul>
+                        </li>
+                    </div>
+                </ul>
+            </div>
+            <div th:if="not ${principal}">
+                <a class="nav-link" href="/login" role="button" aria-expanded="false">Войти</a>
+            </div>
         </div>
     </div>
 </nav>
@@ -49,15 +66,15 @@
     <div class="container">
         <div th:if="${bool.myRecord}">
             <div class="col-6 align-self-center">
-                <h3 th:text="${user.name}"></h3>
-                <h5 th:text="${user.description}"></h5>
+                <h3 th:text="${userRecord.name}"></h3>
+                <h6 th:text="${userRecord.description}"></h6>
             </div>
         </div>
 
         <div th:if="${bool.userRecord}">
             <div class="col-6 align-self-center">
                 <h3 th:text="${userRecord.name}"></h3>
-                <h5 th:text="${userRecord.description}"></h5>
+                <h6 th:text="${userRecord.description}"></h6>
             </div>
             <div class="col-4">
                 <div th:if="not ${subscribe}">

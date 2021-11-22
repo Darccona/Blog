@@ -23,6 +23,9 @@ public class UserEntity {
     @Column(name = "DESCRIPTION")
     private String description;
 
+    @Column(name = "NAMEBLOG")
+    private String nameBlog;
+
     @Column(name = "CLOSED")
     private boolean closed;
 
@@ -31,6 +34,7 @@ public class UserEntity {
         this.name = name;
         this.password = password;
         this.role = "USER";
+        this.nameBlog = "Какой-то блог";
         this.description = "";
         this.closed = false;
     }
@@ -61,6 +65,13 @@ public class UserEntity {
     }
     public String getDescription() {
         return description;
+    }
+
+    public void setNameBlog(String nameBlog) {
+        this.nameBlog = nameBlog;
+    }
+    public String getNameBlog() {
+        return nameBlog;
     }
 
     public void setClosed(boolean closed) {

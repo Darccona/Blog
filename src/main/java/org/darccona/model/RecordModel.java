@@ -7,6 +7,7 @@ import java.util.Date;
 public class RecordModel {
     private String[] text;
     private String username;
+    private String nameBlog;
     private Date date;
     private int like;
     private int comm;
@@ -16,9 +17,10 @@ public class RecordModel {
     long id;
     private SimpleDateFormat format = new SimpleDateFormat("dd.MM.yy HH:mm");
 
-    public RecordModel(String[] text, String username, Date date, int like, int comm, Boolean likeBool, Boolean favBool, long id) {
+    public RecordModel(String[] text, String username, String nameBlog, Date date, int like, int comm, Boolean likeBool, Boolean favBool, long id) {
         this.text = text;
         this.username = username;
+        this.nameBlog = nameBlog;
         this.date = date;
         this.like = like;
         this.comm = comm;
@@ -46,6 +48,10 @@ public class RecordModel {
     }
     public String getUsername() {
         return username;
+    }
+
+    public String getNameBlog() {
+        return nameBlog;
     }
 
     public void setDate(Date date) {

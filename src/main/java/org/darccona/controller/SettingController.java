@@ -24,8 +24,8 @@ public class SettingController {
     public ArrayList<NavModel> setNav(String user) {
         ArrayList<NavModel> nav = new ArrayList<>();
         nav.add(new NavModel("/blog", "Рекомендации"));
-        nav.add(new NavModel("/blog/likeRecord", "Понравившееся"));
-        nav.add(new NavModel("/blog/favRecord", "Избранное"));
+//        nav.add(new NavModel("/blog/likeRecord", "Понравившееся"));
+//        nav.add(new NavModel("/blog/favRecord", "Избранное"));
         nav.add(new NavModel("/blog/userRecord?name="+user, "Мои_посты"));
         return nav;
     }
@@ -36,7 +36,8 @@ public class SettingController {
 
         model.addAttribute("nav", setNav(user.getName()));
         model.addAttribute("user", new UserModel(user.getName()));
-        model.addAttribute("setting", new SettingModel(user.getDescription(), user.getClosed()));
+        model.addAttribute("setting", new SettingModel(
+                user.getDescription(), user.getNameBlog(), user.getClosed()));
 
         return "setting";
     }
@@ -48,6 +49,7 @@ public class SettingController {
 
         user.setDescription(setting.getDescription());
         user.setClosed(setting.getClosed());
+        user.setNameBlog(setting.getNameBlog());
         userRepository.save(user);
 
         String url = "http://localhost:8080/blog/userRecord?name=" + user.getName();

@@ -10,11 +10,14 @@ public class BoolModel {
     public BoolModel(String div) {
         switch (div) {
             case "login": this.login = false; break;
-            case "isEmpty": this.empty = true; break;
 
             case "myRecord": this.myRecord = true; break;
             case "userRecord": this.userRecord = true; break;
         }
+    }
+
+    public void setEmpty() {
+        empty = true;
     }
 
     public boolean getLogin() {

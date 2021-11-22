@@ -2,10 +2,12 @@ package org.darccona.model;
 
 public class SettingModel {
     private String description;
+    private String nameBlog;
     private boolean closed;
 
-    public SettingModel(String description, boolean closed) {
+    public SettingModel(String description, String nameBlog, boolean closed) {
         this.description = description;
+        this.nameBlog = nameBlog;
         this.closed = closed;
     }
 
@@ -14,6 +16,13 @@ public class SettingModel {
     }
     public String getDescription() {
         return description;
+    }
+
+    public void setNameBlog(String nameBlog) {
+        this.nameBlog = nameBlog;
+    }
+    public String getNameBlog() {
+        return nameBlog;
     }
 
     public void setClosed(boolean closed) {
