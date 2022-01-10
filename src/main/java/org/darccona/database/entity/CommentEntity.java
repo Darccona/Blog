@@ -81,4 +81,7 @@ public class CommentEntity {
     public void removeCommReply(CommReplyEntity comment) {
         getCommReply().remove(comment);
     }
+    public int getNumReply() {
+        return commReply.size();
+    }
 }

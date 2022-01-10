@@ -9,6 +9,7 @@ import java.util.List;
 public interface LikeRepository extends CrudRepository<LikeEntity, Long> {
 
     List<LikeEntity> findByUser(UserEntity user);
+    List<LikeEntity> findByRecord(long record);
     LikeEntity findByUserAndRecord(UserEntity user, long record);
-//    LikeEntity findByRecord(long record);
+
 }

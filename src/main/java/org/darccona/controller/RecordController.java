@@ -47,7 +47,6 @@ public class RecordController {
 
     @RequestMapping("/blog/userRecord/record")
     public String blogRecord(@RequestParam(value = "id") long id,
-                             @RequestParam(value = "comm", required = false, defaultValue = "-1") long commId,
                              Principal principal, Model model) {
 
         RecordEntity record = recordRepository.findById(id);
@@ -123,38 +122,28 @@ public class RecordController {
             model.addAttribute("nav", setNav("", false));
         }
 
-        List<CommModel> commList = new ArrayList<>();
+        List<CommentModel> commList = new ArrayList<>();
         for (CommentEntity comm : record.getComment()) {
-            commList.add(new CommModel(comm.getId(), comm.getName(), comm.getText(), comm.getDate(), 0, comm.getId() == commId, ""));
-        }
-        Collections.sort(commList, CommModel.COMPARE_BY_DATE_NEW);
-        model.addAttribute("comm", commList);
-
-        if (commId != -1) {
-            CommentEntity comment = commentRepository.findById(commId);
-            List<CommModel> replyList = new ArrayList<>();
-            for (CommReplyEntity comm : comment.getCommReply()) {
-                CommReplyEntity reply = commReplyRepository.findById(comm.getCommId());
-                if (reply == null) {
-                    replyList.add(new CommModel(comm.getId(), comm.getName(), comm.getText(), comm.getDate(), 0, false, ""));
+            CommentModel c = new CommentModel(comm.getId(), comm.getName(), comm.getText(), comm.getDate());
+            for (CommReplyEntity reply : comm.getCommReply()) {
+                CommReplyEntity r = commReplyRepository.findById(reply.getCommId());
+                if (r == null) {
+                    c.setReply(reply.getId(), reply.getName(), "", reply.getText(), reply.getDate());
                 } else {
-                    replyList.add(new CommModel(comm.getId(), comm.getName(), comm.getText(), comm.getDate(), 0, false, reply.getName()));
+                    c.setReply(reply.getId(), reply.getName(), r.getName(), reply.getText(), reply.getDate());
                 }
             }
-            Collections.sort(replyList, CommModel.COMPARE_BY_DATE_LAST);
-            model.addAttribute("reply", replyList);
+            c.sortReply();
+            commList.add(c);
         }
+        Collections.sort(commList, CommentModel.COMPARE_BY_DATE_NEW);
+        model.addAttribute("comm", commList);
 
-        String link = "userRecord/record?id=" + id;
-
-        if (commId != -1) {
-            link += "&comm=" + commId;
-        }
-
-        model.addAttribute("link", link);
+        model.addAttribute("link", "userRecord/record?id=" + id);
         model.addAttribute("newRecord", new StringModel());
         model.addAttribute("editRecord", new StringModel(record.getText()));
         model.addAttribute("commString", new StringModel());
+        model.addAttribute("admin", userRepository.findByName(principal.getName()).getRole().equals("ADMIN"));
 
         return "record";
     }

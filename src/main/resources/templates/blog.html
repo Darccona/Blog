@@ -49,6 +49,11 @@
                                 <li><a class="dropdown-item" href="/blog/likeRecord">Понравившееся</a></li>
                                 <li><a class="dropdown-item" href="/blog/favRecord">Избранное</a></li>
                                 <li><a class="dropdown-item" href="/blog/settingUser">Настройки</a></li>
+                                <div th:if="${admin}">
+                                    <div th:if="${userRecord}">
+                                        <li><a class="dropdown-item" th:href="@{/blog/admin/blogUser?name={n}(n=${userRecord.name})}">Администрирование</a></li>
+                                    </div>
+                                </div>
                                 <li><a class="dropdown-item" href="/logout">Выход</a></li>
                             </ul>
                         </li>

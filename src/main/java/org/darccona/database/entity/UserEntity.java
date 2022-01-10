@@ -14,6 +14,9 @@ public class UserEntity {
     @Column(name = "NAME")
     private String name;
 
+    @Column(name = "EMAIL")
+    private String email;
+
     @Column(name = "PASSWORD")
     private String password;
 
@@ -29,14 +32,19 @@ public class UserEntity {
     @Column(name = "CLOSED")
     private boolean closed;
 
+    @Column(name = "CONFIRMED")
+    private boolean confirmed;
+
     public UserEntity() {}
-    public UserEntity(String name, String password) {
+    public UserEntity(String name, String email, String password) {
         this.name = name;
+        this.email = email;
         this.password = password;
         this.role = "USER";
         this.nameBlog = "Какой-то блог";
         this.description = "";
         this.closed = false;
+        this.confirmed = false;
     }
 
     public void setName(String name) {
@@ -44,6 +52,13 @@ public class UserEntity {
     }
     public String getName() {
         return name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public String getEmail() {
+        return email;
     }
 
     public void setPassword(String password) {
@@ -79,6 +94,13 @@ public class UserEntity {
     }
     public boolean getClosed() {
         return closed;
+    }
+
+    public void setConfirmed(boolean confirmed) {
+        this.confirmed = confirmed;
+    }
+    public boolean getConfirmed() {
+        return confirmed;
     }
 
     @JsonIgnore

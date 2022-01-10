@@ -9,6 +9,7 @@ import java.util.List;
 public interface FavoriteRepository extends CrudRepository<FavoriteEntity, Long> {
 
     List<FavoriteEntity> findByUser(UserEntity user);
+    List<FavoriteEntity> findByRecord(long record);
     FavoriteEntity findByUserAndRecord(UserEntity user, long record);
 
 }

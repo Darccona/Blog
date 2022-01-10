@@ -35,8 +35,6 @@ public class BlogController {
     public ArrayList<NavModel> setNav(String name, String user, boolean principal) {
         ArrayList<NavModel> nav = new ArrayList<>();
         nav.add(new NavModel("/blog", "Лента"));
-//        nav.add(new NavModel("/blog/likeRecord", "Понравившееся"));
-//        nav.add(new NavModel("/blog/favRecord", "Избранное"));
         if (principal) {
             nav.add(new NavModel("/blog/userRecord?name=" + user, "Мои_посты"));
         } else {
@@ -45,8 +43,6 @@ public class BlogController {
 
         switch (name) {
             case "rec": nav.get(0).setBool(); break;
-//            case "like": nav.get(1).setBool(); break;
-//            case "fav": nav.get(2).setBool(); break;
             case "user": nav.get(1).setBool(); break;
         }
 
@@ -116,6 +112,7 @@ public class BlogController {
         model.addAttribute("user", new UserModel(user.getName()));
         model.addAttribute("string", new StringModel());
         model.addAttribute("principal", true);
+        model.addAttribute("admin", user.getRole().equals("ADMIN"));
 
         return "blog";
     }
@@ -152,6 +149,7 @@ public class BlogController {
         model.addAttribute("user", new UserModel(user.getName()));
         model.addAttribute("string", new StringModel());
         model.addAttribute("principal", true);
+        model.addAttribute("admin", user.getRole().equals("ADMIN"));
 
         return "blog";
     }
@@ -189,6 +187,7 @@ public class BlogController {
         model.addAttribute("user", new UserModel(user.getName()));
         model.addAttribute("string", new StringModel());
         model.addAttribute("principal", true);
+        model.addAttribute("admin", user.getRole().equals("ADMIN"));
 
         return "blog";
     }
@@ -210,7 +209,6 @@ public class BlogController {
                 model.addAttribute("nav", setNav("", user.getName(), true));
 
                 for (RecordEntity record : userRecord.getRecord()) {
-                    model.addAttribute("nav", setNav("", user.getName(), true));
                     String[] text = record.getText().split("\n");
                     recordList.add(new RecordModel(text, userRecord.getName(), userRecord.getNameBlog(), record.getDate(),
                             record.getLike(), record.getComm(),
@@ -274,6 +272,7 @@ public class BlogController {
                 userRecord.getName(), userRecord.getNameBlog(), userRecord.getDescription()));
         model.addAttribute("link", "userRecord?name=" + userRecord.getName());
         model.addAttribute("string", new StringModel());
+        model.addAttribute("admin", userRepository.findByName(principal.getName()).getRole().equals("ADMIN"));
 
         return "blog";
     }
