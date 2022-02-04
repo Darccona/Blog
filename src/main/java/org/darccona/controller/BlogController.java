@@ -4,16 +4,11 @@ import org.darccona.database.entity.*;
 import org.darccona.database.repository.*;
 import org.darccona.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -80,8 +75,10 @@ public class BlogController {
     }
 
     @RequestMapping("/blog")
-    public String blogStart(Principal principal, Model model) {
+    public String blogStart(@RequestParam(value = "new", required = false, defaultValue = "0") int inputStart,
+                            Principal principal, Model model) {
         UserEntity user = userRepository.findByName(principal.getName());
+        BoolModel boolModel;
 
         List<RecordModel> recordList = new ArrayList<>();
         for (SubscribeEntity sub : user.getSubscribe()) {
@@ -98,10 +95,17 @@ public class BlogController {
         if (recordList.size() != 0) {
             Collections.sort(recordList, RecordModel.COMPARE_BY_DATE);
             model.addAttribute("record", recordList);
-            model.addAttribute("bool", new BoolModel("rec"));
+            boolModel = new BoolModel("rec");
         } else {
-            model.addAttribute("bool", new BoolModel("isEmpty"));
+            boolModel = new BoolModel("isEmpty");
             model.addAttribute("message", "Вы ни на кого не подписаны.\nПора это исправить ->");
+        }
+
+        if ((inputStart == 1) && (!(user.getClosed()))) {
+            boolModel.setInputStart();
+            String2Model string2 = new String2Model();
+            string2.setString1(user.getNameBlog());
+            model.addAttribute("strings", string2);
         }
 
         model.addAttribute("link", "");
@@ -113,6 +117,7 @@ public class BlogController {
         model.addAttribute("string", new StringModel());
         model.addAttribute("principal", true);
         model.addAttribute("admin", user.getRole().equals("ADMIN"));
+        model.addAttribute("bool", boolModel);
 
         return "blog";
     }
@@ -245,6 +250,7 @@ public class BlogController {
             model.addAttribute("user", new UserModel(user.getName()));
             model.addAttribute("notice", setNoticeList(user));
             model.addAttribute("num", user.getNotice().size());
+            model.addAttribute("admin", userRepository.findByName(principal.getName()).getRole().equals("ADMIN"));
 
         } else {
             model.addAttribute("principal", false);
@@ -272,7 +278,6 @@ public class BlogController {
                 userRecord.getName(), userRecord.getNameBlog(), userRecord.getDescription()));
         model.addAttribute("link", "userRecord?name=" + userRecord.getName());
         model.addAttribute("string", new StringModel());
-        model.addAttribute("admin", userRepository.findByName(principal.getName()).getRole().equals("ADMIN"));
 
         return "blog";
     }

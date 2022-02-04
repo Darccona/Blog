@@ -12,12 +12,12 @@ public class LoggingController {
 
     @RequestMapping("/")
     public String index() {
-        logger.trace("A TRACE Message");
-        logger.debug("A DEBUG Message");
-        logger.info("An INFO Message");
-        logger.warn("A WARN Message");
-        logger.error("An ERROR Message");
+//        logger.trace("A TRACE Message");
+//        logger.debug("A DEBUG Message");
+//        logger.info("An INFO Message");
+//        logger.warn("A WARN Message");
+//        logger.error("An ERROR Message");
 
-        return "redirect:http://localhost:8080/blog";
+        return "redirect:http://localhost:8080/blog?new=1";
     }
 }

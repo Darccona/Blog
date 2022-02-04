@@ -4,13 +4,11 @@ public class SettingModel {
     private String description;
     private String nameBlog;
     private String code;
-    private boolean closed;
 
-    public SettingModel(String description, String code, String nameBlog, boolean closed) {
+    public SettingModel(String description, String code, String nameBlog) {
         this.description = description;
         this.nameBlog = nameBlog;
         this.code = code;
-        this.closed = closed;
     }
 
     public void setDescription(String description) {
@@ -32,12 +30,5 @@ public class SettingModel {
     }
     public String getCode() {
         return code;
-    }
-
-    public void setClosed(boolean closed) {
-        this.closed = closed;
-    }
-    public boolean getClosed() {
-        return closed;
     }
 }

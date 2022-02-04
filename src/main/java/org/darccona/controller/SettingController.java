@@ -76,13 +76,13 @@ public class SettingController {
         model.addAttribute("num", user.getNotice().size());
         model.addAttribute("link", "settingUser");
         model.addAttribute("setting", new SettingModel(
-                user.getDescription(), "", user.getNameBlog(), user.getClosed()));
+                user.getDescription(), "", user.getNameBlog()));
 
         return "setting";
     }
 
     @PostMapping("/blog/settingUser/set")
-    public String settingSet(@ModelAttribute("setting") SettingModel setting,
+    public String settingUserSet(@ModelAttribute("setting") SettingModel setting,
                            Principal principal, Model model) {
         UserEntity user = userRepository.findByName(principal.getName());
 
@@ -97,13 +97,36 @@ public class SettingController {
         }
 
         user.setDescription(setting.getDescription());
-        user.setClosed(setting.getClosed());
+//        user.setClosed(setting.getClosed());
         user.setNameBlog(setting.getNameBlog());
+        user.setClosed(true);
         userRepository.save(user);
 
         String url = "http://localhost:8080/blog/userRecord?name=" + user.getName();
 
         return "redirect:" + url;
+    }
+
+    @PostMapping("/blog/setting/set")
+    public String settingSet(@ModelAttribute("string2") String2Model string2,
+                             Principal principal, Model model) {
+        UserEntity user = userRepository.findByName(principal.getName());
+
+        user.setNameBlog(string2.getString1());
+        user.setDescription(string2.getString2());
+        user.setClosed(true);
+        userRepository.save(user);
+
+        return "redirect:/blog";
+    }
+
+    @GetMapping("/blog/setting/back")
+    public String settingBack(Principal principal, Model model) {
+        UserEntity user = userRepository.findByName(principal.getName());
+        user.setClosed(true);
+        userRepository.save(user);
+
+        return "redirect:/blog";
     }
 
 }

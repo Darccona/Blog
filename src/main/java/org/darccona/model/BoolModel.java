@@ -7,6 +7,8 @@ public class BoolModel {
     private boolean myRecord = false;
     private boolean userRecord = false;
 
+    private boolean inputStart = false;
+
     public BoolModel(String div) {
         switch (div) {
             case "login": this.login = false; break;
@@ -18,6 +20,9 @@ public class BoolModel {
 
     public void setEmpty() {
         empty = true;
+    }
+    public void setInputStart() {
+        inputStart = true;
     }
 
     public boolean getLogin() {
@@ -32,6 +37,10 @@ public class BoolModel {
     }
     public boolean getUserRecord() {
         return userRecord;
+    }
+
+    public boolean getInputStart() {
+        return inputStart;
     }
 }
 

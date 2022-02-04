@@ -103,6 +103,7 @@ public class RecordController {
             model.addAttribute("nav", setNav(user.getName(), true));
             model.addAttribute("user", new UserModel(
                     user.getName(), user.getNameBlog(), user.getDescription()));
+            model.addAttribute("admin", userRepository.findByName(principal.getName()).getRole().equals("ADMIN"));
 
         } else {
             model.addAttribute("principal", false);
@@ -143,7 +144,6 @@ public class RecordController {
         model.addAttribute("newRecord", new StringModel());
         model.addAttribute("editRecord", new StringModel(record.getText()));
         model.addAttribute("commString", new StringModel());
-        model.addAttribute("admin", userRepository.findByName(principal.getName()).getRole().equals("ADMIN"));
 
         return "record";
     }

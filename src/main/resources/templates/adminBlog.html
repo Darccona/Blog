@@ -51,8 +51,16 @@
         </div>
 
         <div class="col-4">
-            <a class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#subModal" th:text="'Подписчики ('+${blog.numSub}+')'"></a>
-            <a class="btn btn-outline-danger" th:href="@{/blog/admin/delUser?name={n}(n=${blog.name})}">Удалить пользователя</a>
+            <div class="btn-group">
+                <a class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#subModal" th:text="'Подписчики ('+${blog.numSub}+')'"></a>
+                <div th:if="not ${blog.admin}">
+                    <a class="btn btn-outline-primary" th:href="@{/blog/admin/setAdmin?name={n}(n=${blog.name})}">Дать права администратора</a>
+                </div>
+                <div th:if="${blog.admin}">
+                    <a class="btn btn-primary" th:href="@{/blog/admin/delAdmin?name={n}(n=${blog.name})}">Лишить прав администратора</a>
+                </div>
+                <a class="btn btn-outline-danger" th:href="@{/blog/admin/delUser?name={n}(n=${blog.name})}">Удалить пользователя</a>
+            </div>
         </div>
     </div>
 </nav>

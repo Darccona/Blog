@@ -65,16 +65,18 @@ public class AdminUserModel {
     private String userDescription;
     private List<UserModel> userSub;
     private List<Record> record;
+    private boolean userAdmin;
 
     public AdminUserModel(String name) {
         link = "/blog/admin/blogUser?name=" + name;
         record = new ArrayList<>();
     }
 
-    public void setUser(String name, String nameBlog, String description) {
+    public void setUser(String name, String nameBlog, String description, boolean admin) {
         userName = name;
         userNameBlog = nameBlog;
         userDescription = description;
+        userAdmin = admin;
     }
 
     public void setUserSub(List<UserModel> userSub) {
@@ -102,6 +104,9 @@ public class AdminUserModel {
     }
     public String getDescription() {
         return userDescription;
+    }
+    public Boolean getAdmin() {
+        return userAdmin;
     }
 
     public int getNumSub() {

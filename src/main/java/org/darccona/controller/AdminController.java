@@ -37,16 +37,6 @@ public class AdminController {
     @Autowired
     CommReplyRepository commReplyRepository;
 
-    @GetMapping("/setAdmin")
-    public String setAdmin(Principal principal) {
-        UserEntity user = userRepository.findByName(principal.getName());
-        user.setRole("ADMIN");
-        userRepository.save(user);
-        LOG.info("Пользователь "+user.getName()+" получил права администратора");
-
-        return "redirect:/blog";
-    }
-
     public ArrayList<NavModel> setNav(String name, String user, boolean principal) {
         ArrayList<NavModel> nav = new ArrayList<>();
         nav.add(new NavModel("/blog", "Лента"));
@@ -88,10 +78,15 @@ public class AdminController {
     public String blog(@RequestParam(value = "name") String name, Principal principal, Model model) {
 
         UserEntity user = userRepository.findByName(name);
+
+        if (user == null) {
+            return "nope";
+        }
+
         UserEntity admin = userRepository.findByName(principal.getName());
         AdminUserModel blog = new AdminUserModel(name);
 
-        blog.setUser(user.getName(), user.getNameBlog(), user.getDescription());
+        blog.setUser(user.getName(), user.getNameBlog(), user.getDescription(), user.getRole().equals("ADMIN"));
 
         List<UserModel> subList = new ArrayList<>();
         for (SubscribeEntity userSub : subscribeRepository.findByName(name)) {
@@ -205,6 +200,28 @@ public class AdminController {
         recordRepository.save(record);
 
         String url = "/blog/admin/record?id=" + id;
+
+        return "redirect:" + url;
+    }
+
+    @GetMapping("/blog/admin/setAdmin")
+    public String setAdmin(@RequestParam(value = "name") String name, Principal principal) {
+        UserEntity user = userRepository.findByName(name);
+        user.setRole("ADMIN");
+        userRepository.save(user);
+        LOG.info("Пользователь "+user.getName()+" получил права администратора");
+        String url = "/blog/admin/blogUser?name=" + name;
+
+        return "redirect:" + url;
+    }
+
+    @GetMapping("/blog/admin/delAdmin")
+    public String delAdmin(@RequestParam(value = "name") String name, Principal principal) {
+        UserEntity user = userRepository.findByName(name);
+        user.setRole("USER");
+        userRepository.save(user);
+        LOG.info("Пользователь "+user.getName()+" лишился прав администратора");
+        String url = "/blog/admin/blogUser?name=" + name;
 
         return "redirect:" + url;
     }
