@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -177,9 +178,43 @@ public class SecurityController {
     @GetMapping("/blog/newPassword")
     public String newPassword(Principal principal) {
         UserEntity user = userRepository.findByName(principal.getName());
-        newPassword(user.getName(), user.getEmail());
+        LinkEmailEntity linkEmail = linkEmailRepository.findByName(user.getName());
+        String link = getLink(user.getName());
 
-        return "redirect:/blog/settingUser";
+        if (linkEmail != null) {
+            linkEmail.setLink(link);
+        } else {
+            linkEmail = new LinkEmailEntity(user.getName(), link);
+        }
+        linkEmailRepository.save(linkEmail);
+        String url = "/blog/newPassword/email?id=" + link;
+
+        return "redirect:" + url;
+    }
+
+    @GetMapping("/blog/newPassword/send")
+    public String newPasswordEmailSend(Model model) {
+        model.addAttribute("string", new StringModel());
+        model.addAttribute("divError", false);
+
+        return "email";
+    }
+
+    @PostMapping("/blog/newPassword/send")
+    public String newPasswordEmailSendPost(@ModelAttribute("string") StringModel string, Model model) {
+        UserEntity user = userRepository.findByName(string.getText());
+
+        if (user != null) {
+            newPassword(user.getName(), user.getEmail());
+        } else {
+            model.addAttribute("string", new StringModel());
+            model.addAttribute("divError", true);
+            model.addAttribute("error", "Такого пользователя не существует");
+
+            return "email";
+        }
+
+        return "redirect:/login";
     }
 
     @GetMapping("/blog/newPassword/email")
