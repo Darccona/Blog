@@ -80,6 +80,10 @@ public class BlogController {
         UserEntity user = userRepository.findByName(principal.getName());
         BoolModel boolModel;
 
+        if (user == null) {
+            return "nope";
+        }
+
         List<RecordModel> recordList = new ArrayList<>();
         for (SubscribeEntity sub : user.getSubscribe()) {
             for (RecordEntity record : recordRepository.findByUser(userRepository.findByName(sub.getName()))) {

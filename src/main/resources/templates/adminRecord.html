@@ -119,7 +119,7 @@
             <div class="modal-body">
                 <form th:action="@{/blog/addRecord?link={l}(l=${link})}" th:object="${string}" method="post">
                     <div class="input-group mb-2">
-                        <textarea type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2" th:field="*{text}" autocomplete="off"></textarea>
+                        <textarea type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2" th:field="*{text}" autocomplete="off" maxlength="16000"></textarea>
                     </div>
                     <div class="d-grid d-md-flex justify-content-md-end">
                         <button class="btn btn-outline-primary" type="submit">Сохранить</button>
