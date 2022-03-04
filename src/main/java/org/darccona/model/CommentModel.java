@@ -2,6 +2,7 @@ package org.darccona.model;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CommentModel {
 
@@ -33,6 +34,9 @@ public class CommentModel {
         public String getDate() {
             return format.format(date);
         }
+        public Date getDateSort() {
+            return date;
+        }
 
         public String getNameReply() {
             if (nameReply.equals("")) {
@@ -41,11 +45,11 @@ public class CommentModel {
             return " (в ответ " + nameReply + ')';
         }
 
-        public static Comparator<Reply> COMPARE_BY_DATE_LAST = new Comparator<Reply>() {
-            public int compare(Reply one, Reply other) {
-                return one.date.compareTo(other.date);
-            }
-        };
+//        public static Comparator<Reply> COMPARE_BY_DATE_LAST = new Comparator<Reply>() {
+//            public int compare(Reply one, Reply other) {
+//                return one.date.compareTo(other.date);
+//            }
+//        };
     }
 
     private long id;
@@ -77,12 +81,16 @@ public class CommentModel {
     public String getDate() {
         return format.format(date);
     }
+    public Date getDateSort() {
+        return date;
+    }
 
     public void setReply(long id, String name, String nameReply, String text, Date date) {
         reply.add(new Reply(id, name, nameReply, text, date));
     }
     public void sortReply() {
-        Collections.sort(reply, Reply.COMPARE_BY_DATE_LAST);
+        reply = reply.stream().sorted(Comparator.comparing(Reply::getDateSort)).collect(Collectors.toList());
+//        Collections.sort(reply, Reply.COMPARE_BY_DATE_LAST);
     }
     public boolean getBoolReply() {
         return (reply.size() != 0);
@@ -94,9 +102,9 @@ public class CommentModel {
         return reply;
     }
 
-    public static Comparator<CommentModel> COMPARE_BY_DATE_NEW = new Comparator<CommentModel>() {
-        public int compare(CommentModel other, CommentModel one) {
-            return one.date.compareTo(other.date);
-        }
-    };
+//    public static Comparator<CommentModel> COMPARE_BY_DATE_NEW = new Comparator<CommentModel>() {
+//        public int compare(CommentModel other, CommentModel one) {
+//            return one.date.compareTo(other.date);
+//        }
+//    };
 }

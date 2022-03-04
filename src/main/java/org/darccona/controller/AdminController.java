@@ -16,6 +16,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class AdminController {
@@ -70,7 +71,11 @@ public class AdminController {
                 noticeList.add(new NoticeModel(notice.getText(), notice.getComm(), notice.getDate(), true, notice.getId()));
             }
         }
-        Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
+        noticeList = noticeList
+                .stream()
+                .sorted((o1,o2) -> -o1.getDateSort().compareTo(o2.getDateSort()))
+                .collect(Collectors.toList());
+//        Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
         return noticeList;
     }
 
@@ -146,7 +151,11 @@ public class AdminController {
             c.sortReply();
             commList.add(c);
         }
-        Collections.sort(commList, CommentModel.COMPARE_BY_DATE_NEW);
+        commList = commList.
+                stream().
+                sorted((o1,o2) -> -o1.getDateSort().compareTo(o2.getDateSort())).
+                collect(Collectors.toList());
+//        Collections.sort(commList, CommentModel.COMPARE_BY_DATE_NEW);
         recordModel.setComments(commList);
 
         model.addAttribute("record", recordModel);

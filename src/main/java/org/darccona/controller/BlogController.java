@@ -12,6 +12,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class BlogController {
@@ -60,7 +61,12 @@ public class BlogController {
                 noticeList.add(new NoticeModel(notice.getText(), notice.getComm(), notice.getDate(), true, notice.getId()));
             }
         }
-        Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
+        noticeList = noticeList
+                .stream()
+                .sorted((o1,o2) -> -o1.getDateSort().compareTo(o2.getDateSort()))
+                .collect(Collectors.toList());
+
+//        Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
         return noticeList;
     }
 
@@ -84,20 +90,30 @@ public class BlogController {
             return "nope";
         }
 
-        List<RecordModel> recordList = new ArrayList<>();
-        for (SubscribeEntity sub : user.getSubscribe()) {
-            for (RecordEntity record : recordRepository.findByUser(userRepository.findByName(sub.getName()))) {
-                String[] text = record.getText().split("\n");
-                recordList.add(new RecordModel(text, sub.getName(), "", record.getDate(),
+        List<RecordModel> recordList = user.getSubscribe()
+                .stream().flatMap(sub -> recordRepository.findByUser(userRepository.findByName(sub.getName()))
+                .stream().map((record) -> new RecordModel(
+                        record.getText().split("\n"), sub.getName(), "", record.getDate(),
                         record.getLike(), record.getComm(),
                         likeRepository.findByUserAndRecord(user, record.getId())!=null,
                         favoriteRepository.findByUserAndRecord(user, record.getId())!=null,
-                        record.getId()));
-            }
-        }
+                        record.getId())))
+                .sorted((o1,o2) -> -o1.getDateSort().compareTo(o2.getDateSort()))
+                .collect(Collectors.toList());
+//        List<RecordModel> recordList = new ArrayList<>();
+//        for (SubscribeEntity sub : user.getSubscribe()) {
+//            for (RecordEntity record : recordRepository.findByUser(userRepository.findByName(sub.getName()))) {
+//                String[] text = record.getText().split("\n");
+//                recordList.add(new RecordModel(text, sub.getName(), "", record.getDate(),
+//                        record.getLike(), record.getComm(),
+//                        likeRepository.findByUserAndRecord(user, record.getId())!=null,
+//                        favoriteRepository.findByUserAndRecord(user, record.getId())!=null,
+//                        record.getId()));
+//            }
+//        }
 
         if (recordList.size() != 0) {
-            Collections.sort(recordList, RecordModel.COMPARE_BY_DATE);
+//            Collections.sort(recordList, RecordModel.COMPARE_BY_DATE);
             model.addAttribute("record", recordList);
             boolModel = new BoolModel("rec");
         } else {
@@ -142,7 +158,10 @@ public class BlogController {
         }
 
         if (recordList.size() != 0) {
-            Collections.sort(recordList, RecordModel.COMPARE_BY_DATE);
+            recordList = recordList
+                    .stream()
+                    .sorted((o1,o2) -> -o1.getDateSort().compareTo(o2.getDateSort()))
+                    .collect(Collectors.toList());
             model.addAttribute("record", recordList);
             model.addAttribute("bool", new BoolModel("like"));
         } else {
@@ -180,7 +199,10 @@ public class BlogController {
         }
 
         if (recordList.size() != 0) {
-            Collections.sort(recordList, RecordModel.COMPARE_BY_DATE);
+            recordList = recordList
+                    .stream()
+                    .sorted((o1,o2) -> -o1.getDateSort().compareTo(o2.getDateSort()))
+                    .collect(Collectors.toList());
             model.addAttribute("record", recordList);
             model.addAttribute("bool", new BoolModel("fav"));
         } else {
@@ -225,7 +247,10 @@ public class BlogController {
                             favoriteRepository.findByUserAndRecord(user, record.getId()) != null,
                             record.getId()));
                 }
-                Collections.sort(recordList, RecordModel.COMPARE_BY_DATE);
+                recordList = recordList
+                        .stream()
+                        .sorted((o1,o2) -> -o1.getDateSort().compareTo(o2.getDateSort()))
+                        .collect(Collectors.toList());
                 model.addAttribute("record", recordList);
 
             } else {
@@ -241,7 +266,7 @@ public class BlogController {
                 }
 
                 if (recordList.size() != 0) {
-                    Collections.sort(recordList, RecordModel.COMPARE_BY_DATE);
+                    recordList = recordList.stream().sorted((o1,o2) -> -o1.getDateSort().compareTo(o2.getDateSort())).collect(Collectors.toList());
                     model.addAttribute("record", recordList);
                 } else {
                     bool.setEmpty();
@@ -268,7 +293,10 @@ public class BlogController {
                         record.getLike(), record.getComm(),
                         false, false, record.getId()));
             }
-            Collections.sort(recordList, RecordModel.COMPARE_BY_DATE);
+            recordList = recordList
+                    .stream()
+                    .sorted((o1,o2) -> -o1.getDateSort().compareTo(o2.getDateSort()))
+                    .collect(Collectors.toList());
             model.addAttribute("record", recordList);
 
             List<UserModel> userList = new ArrayList<>();

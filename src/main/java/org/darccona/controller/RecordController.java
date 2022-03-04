@@ -13,6 +13,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class RecordController {
@@ -96,7 +97,8 @@ public class RecordController {
                     noticeList.add(new NoticeModel(notice.getText(), notice.getComm(), notice.getDate(), true, notice.getId()));
                 }
             }
-            Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
+            noticeList = noticeList.stream().sorted((o1,o2) -> -o1.getDateSort().compareTo(o2.getDateSort())).collect(Collectors.toList());
+//            Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
             model.addAttribute("notice", noticeList);
             model.addAttribute("num", user.getNotice().size());
 
@@ -137,7 +139,11 @@ public class RecordController {
             c.sortReply();
             commList.add(c);
         }
-        Collections.sort(commList, CommentModel.COMPARE_BY_DATE_NEW);
+        commList = commList
+                .stream()
+                .sorted((o1,o2) -> -o1.getDateSort().compareTo(o2.getDateSort()))
+                .collect(Collectors.toList());
+//        Collections.sort(commList, CommentModel.COMPARE_BY_DATE_NEW);
         model.addAttribute("comm", commList);
 
         model.addAttribute("link", "userRecord/record?id=" + id);

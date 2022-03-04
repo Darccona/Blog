@@ -31,6 +31,9 @@ public class NoticeModel {
     public String getDate() {
         return format.format(date);
     }
+    public Date getDateSort() {
+        return date;
+    }
     public boolean getComm() {
         return comm;
     }
@@ -42,9 +45,9 @@ public class NoticeModel {
         return id;
     }
 
-    public static Comparator<NoticeModel> COMPARE_BY_DATE = new Comparator<NoticeModel>() {
-        public int compare(NoticeModel other, NoticeModel one) {
-            return one.date.compareTo(other.date);
-        }
-    };
+//    public static Comparator<NoticeModel> COMPARE_BY_DATE = new Comparator<NoticeModel>() {
+//        public int compare(NoticeModel other, NoticeModel one) {
+//            return one.date.compareTo(other.date);
+//        }
+//    };
 }
