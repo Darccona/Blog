@@ -57,6 +57,9 @@ public class RecordModel {
     public void setDate(Date date) {
         this.date = date;
     }
+    public Date getDateSort() {
+        return date;
+    }
     public String getDate() {
         return format.format(date);
     }
@@ -96,9 +99,9 @@ public class RecordModel {
         return id;
     }
 
-    public static Comparator<RecordModel> COMPARE_BY_DATE = new Comparator<RecordModel>() {
-        public int compare(RecordModel other, RecordModel one) {
-            return one.date.compareTo(other.date);
-        }
-    };
+//    public static Comparator<RecordModel> COMPARE_BY_DATE = new Comparator<RecordModel>() {
+//        public int compare(RecordModel other, RecordModel one) {
+//            return one.date.compareTo(other.date);
+//        }
+//    };
 }

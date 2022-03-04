@@ -74,6 +74,9 @@ public class RecordEntity {
     public void removeComm() {
         this.comm -= 1;
     }
+    public void removeComm(int i) {
+        this.comm -= i;
+    }
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user", nullable = false)

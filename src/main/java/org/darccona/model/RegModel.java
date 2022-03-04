@@ -2,6 +2,7 @@ package org.darccona.model;
 
 public class RegModel {
     private String name;
+    private String email;
     private String password1;
     private String password2;
 
@@ -12,6 +13,13 @@ public class RegModel {
     }
     public String getName() {
         return name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public String getEmail() {
+        return email;
     }
 
     public void setPassword1(String password) {

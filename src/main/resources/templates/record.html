@@ -34,6 +34,9 @@
                                 <li><a class="dropdown-item" href="/blog/likeRecord">Понравившееся</a></li>
                                 <li><a class="dropdown-item" href="/blog/favRecord">Избранное</a></li>
                                 <li><a class="dropdown-item" href="/blog/settingUser">Настройки</a></li>
+                                <div th:if="${admin}">
+                                    <li><a class="dropdown-item" th:href="@{/blog/admin/record?id={id}(id=${record.id})}">Администрирование</a></li>
+                                </div>
                                 <li><a class="dropdown-item" href="/logout">Выход</a></li>
                             </ul>
                         </li>
@@ -106,13 +109,13 @@
                         <tr th:each="c: ${comm}">
                             <li class="list-group-item">
                                 <figure>
-                                    <blockquote class="blockquote"><a th:href="@{/blog/userRecord?name={n}(n=${c.name})}" th:text="${c.name}"></a></blockquote>
+                                    <blockquote class="blockquote"><a th:href="@{/blog/admin/blogUser?name={n}(n=${c.name})}" th:text="${c.name}"></a></blockquote>
                                     <figcaption class="blockquote-footer" th:text="${c.date}"></figcaption>
                                 </figure>
                                 <p th:text="${c.text}"></p>
-                                <a th:href="@{/blog/userRecord/record?id={i}&comm={c}(i=${record.id},c=${c.id})}">Ответы</a> /
-                                <a data-bs-toggle="collapse" th:href="'#commReply'+${c.id}" role="button" aria-expanded="true">Ответить</a>
-                                <div class="collapse" th:id="'commReply'+${c.id}">
+                                <a data-bs-toggle="collapse" th:href="@{#collapse{id}(id=${c.id})}" role="button" aria-expanded="false" th:aria-controls="@{collapse{id}(id=${c.id})}" th:text="'Ответы ('+${c.numReply}+')'"></a> /
+                                <a data-bs-toggle="collapse" th:href="'#comm'+${c.id}" role="button" aria-expanded="true">Ответить</a>
+                                <div class="collapse" th:id="'comm'+${c.id}">
                                     <form th:action="@{/blog/comm?id={i}&comm={c}&link={l}(i=${record.id},c=${c.id},l=${link})}" th:object="${commString}" method="post">
                                         <div class="input-group mb-3">
                                             <button class="btn btn-outline-primary" type="submit">Сохранить</button>
@@ -121,15 +124,15 @@
                                     </form>
                                 </div>
                             </li>
-                            <div th:if="${c.reply}">
-                                <div class="container">
-                                    <div class="row justify-content-md-end">
-                                        <div class="col">
+                            <div class="container">
+                                <div class="row justify-content-md-end">
+                                    <div class="col">
+                                        <div class="collapse multi-collapse" th:id="@{collapse{id}(id=${c.id})}">
                                             <ul class="list-group list-group-flush">
-                                                <div th:each="r: ${reply}">
+                                                <div th:each="r: ${c.reply}">
                                                     <li class="list-group-item">
                                                         <figure>
-                                                            <blockquote class="blockquote"><a th:href="@{/blog/userRecord?name={n}(n=${r.name})}" th:text="${r.name} + ${r.replyString}"></a></blockquote>
+                                                            <blockquote class="blockquote"><a th:href="@{/blog/admin/blogUser?name={n}(n=${r.name})}" th:text="${r.name} + ${r.nameReply}"></a></blockquote>
                                                             <figcaption class="blockquote-footer" th:text="${r.date}"></figcaption>
                                                         </figure>
                                                         <p th:text="${r.text}"></p>
@@ -153,7 +156,6 @@
                     </table>
                 </ul>
             </div>
-
         </div>
 
         <div class="col-4">
@@ -181,7 +183,7 @@
             <div class="modal-body">
                 <form th:action="@{/blog/addRecord?link={l}(l=${link})}" th:object="${newRecord}" method="post">
                     <div class="input-group mb-2">
-                        <textarea type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2" th:field="*{text}" autocomplete="off"></textarea>
+                        <textarea type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2" th:field="*{text}" autocomplete="off" maxlength="16000"></textarea>
                     </div>
                     <div class="d-grid d-md-flex justify-content-md-end">
                         <button class="btn btn-outline-primary" type="submit">Сохранить</button>

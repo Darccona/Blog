@@ -9,6 +9,7 @@ import java.util.List;
 public interface SubscribeRepository extends CrudRepository<SubscribeEntity, Long> {
 
     List<SubscribeEntity> findByUser(UserEntity user);
+    List<SubscribeEntity> findByName(String name);
     SubscribeEntity findByUserAndName(UserEntity user, String name);
 
 }
