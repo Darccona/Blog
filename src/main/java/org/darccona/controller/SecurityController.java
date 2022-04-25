@@ -7,14 +7,13 @@ import org.darccona.database.entity.UserEntity;
 import org.darccona.database.repository.ConfirmationUserRepository;
 import org.darccona.database.repository.LinkEmailRepository;
 import org.darccona.database.repository.UserRepository;
-import org.darccona.model.String2Model;
 import org.darccona.model.RegModel;
+import org.darccona.model.String2Model;
 import org.darccona.model.StringModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,27 +27,33 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.Date;
 import java.util.Random;
-import java.util.zip.ZipEntry;
 
-
+/**
+ * Класс контролеера обработки действий с аккаунтом и безопастностью
+ */
 @Controller
 public class SecurityController {
 
     private static final Logger LOG = LoggerFactory.getLogger(SecurityController.class);
 
     @Autowired
-    EmailService emailService;
+    private EmailService emailService;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    ConfirmationUserRepository confirmationUserRepository;
+    private ConfirmationUserRepository confirmationUserRepository;
     @Autowired
-    LinkEmailRepository linkEmailRepository;
+    private LinkEmailRepository linkEmailRepository;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    /**
+     * Возвращает страницу для регистрации
+     * @param model модель страницы, содержащая все объекты
+     * @return страница для регистрации
+     */
     @GetMapping("/registration")
     public String formReg(Model model) {
         model.addAttribute("divError", false);
@@ -57,6 +62,11 @@ public class SecurityController {
         return "registration";
     }
 
+    /**
+     * Генерирует окончание для ссылки
+     * @param name имя пользователя
+     * @return окончание для ссылки
+     */
     private String getLink(String name) {
         Random random = new Random();
         Date date = new Date();
@@ -70,6 +80,10 @@ public class SecurityController {
         return Long.toHexString(time);
     }
 
+    /**
+     * Генерирует 5-значный код из цифр
+     * @return 5-значный код из цифр
+     */
     private String getCode() {
         Random random = new Random();
         String code = "";
@@ -81,6 +95,11 @@ public class SecurityController {
         return code;
     }
 
+    /**
+     * Отправляет сообщение для подтверждения аккаунта на эллектронную почту
+     * @param name имя пользователя
+     * @param email эллектронная почта пользователя
+     */
     private void regEmail(String name, String email) {
 
         ConfirmationUserEntity confirmation = confirmationUserRepository.findByName(name);
@@ -111,6 +130,11 @@ public class SecurityController {
         }
     }
 
+    /**
+     * Отправляет сообщение для смены пороля на эллектронную почту
+     * @param name имя пользователя
+     * @param email эллектронная почта пользователя
+     */
     private void newPassword(String name, String email) {
         LinkEmailEntity linkEmail = linkEmailRepository.findByName(name);
         String link = getLink(name);
@@ -135,6 +159,13 @@ public class SecurityController {
         }
     }
 
+    /**
+     * Обработка запроса на регистрацию. Если информации достаточно и она верная,
+     * то регестрирует пользователя, иначе перенаправляет на страницу регистрации с сообщение об ошибке
+     * @param reg модел, содержащая всю необходимую, для регистрацию пользователя информацию
+     * @param model модель страницы, содержащая все объекты
+     * @return перенаправляет на страницу входа или регистрации
+     */
     @PostMapping("/registration")
     public String registration(@ModelAttribute("reg") RegModel reg, Model model) {
         UserEntity user = userRepository.findByName(reg.getName());
@@ -167,6 +198,11 @@ public class SecurityController {
         return "redirect:/login";
     }
 
+    /**
+     * Повторно отправляет письмо для подтверждения аккаунта на эллектронную почту
+     * @param principal данные пользователя
+     * @return перенаправляет на страницу настроек аккаунта
+     */
     @GetMapping("/blog/confirmationEmail")
     public String confirmationEmail(Principal principal) {
         UserEntity user = userRepository.findByName(principal.getName());
@@ -175,6 +211,11 @@ public class SecurityController {
         return "redirect:/blog/settingUser";
     }
 
+    /**
+     * Создаёт новую ссылку для смены пароля пользователя
+     * @param principal данные пользователя
+     * @return переносит на страницу для смены пароля пользователя
+     */
     @GetMapping("/blog/newPassword")
     public String newPassword(Principal principal) {
         UserEntity user = userRepository.findByName(principal.getName());
@@ -192,6 +233,11 @@ public class SecurityController {
         return "redirect:" + url;
     }
 
+    /**
+     * Генерирует страницу для указания имени пользователя для востановления доступа
+     * @param model модель страницы, содержащая все объекты
+     * @return страницу для указания имени пользователя
+     */
     @GetMapping("/blog/newPassword/send")
     public String newPasswordEmailSend(Model model) {
         model.addAttribute("string", new StringModel());
@@ -200,6 +246,13 @@ public class SecurityController {
         return "email";
     }
 
+    /**
+     * Получает имя пользователя и отправляет письмо для востановления доступа на его почту.
+     * Если нет пользователя с таким именем возвращает страницу для ввода имени с указанием на ошибку
+     * @param string имя пользователя, которому нужно востановить пароль
+     * @param model модель страницы, содержащая все объекты
+     * @return страницу для входа или страницу для воода имени
+     */
     @PostMapping("/blog/newPassword/send")
     public String newPasswordEmailSendPost(@ModelAttribute("string") StringModel string, Model model) {
         UserEntity user = userRepository.findByName(string.getText());
@@ -217,6 +270,12 @@ public class SecurityController {
         return "redirect:/login";
     }
 
+    /**
+     * Генерирует страницу для указания нового пароля
+     * @param id ссылка для востановления доступа
+     * @param model модель страницы, содержащая все объекты
+     * @return страница для указания нового пароля
+     */
     @GetMapping("/blog/newPassword/email")
     public String newPasswordEmail(@RequestParam(value = "id") String id, Model model) {
         LinkEmailEntity linkEmail = linkEmailRepository.findByLink(id);
@@ -232,6 +291,13 @@ public class SecurityController {
         return "nope";
     }
 
+    /**
+     * Получает новый пароль и присваивает его пользователю
+     * @param id ссылка для востановления доступа
+     * @param password пара одинаковых новых паролей
+     * @param model модель страницы, содержащая все объекты
+     * @return перенаправляет на главную страницу блога
+     */
     @PostMapping("/blog/newPassword/set")
     public String newPasswordSet(@RequestParam(value = "id") String id,
                                  @ModelAttribute("password") String2Model password,
@@ -258,6 +324,12 @@ public class SecurityController {
         return "redirect:/blog";
     }
 
+    /**
+     * Получает и присваивает пользователю новую электронную почту
+     * @param string адрес новой электронной почты
+     * @param principal данные пользователя
+     * @return перенаправляет на страницу настроек пользователя
+     */
     @PostMapping("/blog/confirmationNewEmail")
     public String confirmationNewEmail(@ModelAttribute("string") StringModel string,
                                        Principal principal) {
@@ -270,6 +342,11 @@ public class SecurityController {
         return "redirect:/blog/settingUser";
     }
 
+    /**
+     * Обрабатывает подтверждение пользователем электронной почты
+     * @param id ссылка для подтверждения пользователя
+     * @return перенаправляет на главную страницу
+     */
     @GetMapping("/blog/confirmationUser")
     public String confirmationUser(@RequestParam(value = "id") String id) {
 
@@ -287,6 +364,12 @@ public class SecurityController {
         return "redirect:/blog";
     }
 
+    /**
+     * Обрабатывает выход пользователя из аккаунта
+     * @param request данные на пользователя
+     * @return перенаправляет на страницу входа
+     * @throws ServletException
+     */
     @GetMapping("/logout")
     public String logout(HttpServletRequest request) throws ServletException {
         request.logout();

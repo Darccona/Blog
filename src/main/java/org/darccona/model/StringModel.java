@@ -1,5 +1,8 @@
 package org.darccona.model;
 
+/**
+ * Класс модели одной строки
+ */
 public class StringModel {
     private String text;
 

@@ -5,19 +5,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * Класса контроллера логирования
+ */
 @Controller
 public class LoggingController {
 
     Logger logger = LoggerFactory.getLogger(LoggingController.class);
 
+    /**
+     * Перенаправляет на главную страницу при входе
+     * @return перенаправляет на главную страницу
+     */
     @RequestMapping("/")
     public String index() {
-//        logger.trace("A TRACE Message");
-//        logger.debug("A DEBUG Message");
-//        logger.info("An INFO Message");
-//        logger.warn("A WARN Message");
-//        logger.error("An ERROR Message");
-
         return "redirect:http://localhost:8080/blog?new=1";
     }
 }

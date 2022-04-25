@@ -1,5 +1,8 @@
 package org.darccona.model;
 
+/**
+ * Класс модели данных о пользователе
+ */
 public class UserModel {
     private String name;
     private String nameBlog;

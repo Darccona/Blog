@@ -6,28 +6,39 @@ import org.darccona.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Класс контроллера обработки действий на страницах с множеством записей
+ */
 @Controller
 public class BlogController {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    RecordRepository recordRepository;
+    private RecordRepository recordRepository;
     @Autowired
-    SubscribeRepository subscribeRepository;
+    private SubscribeRepository subscribeRepository;
     @Autowired
-    LikeRepository likeRepository;
+    private LikeRepository likeRepository;
     @Autowired
-    FavoriteRepository favoriteRepository;
+    private FavoriteRepository favoriteRepository;
 
+    /**
+     * Возвращает навигацию для страницы
+     * @param name имя страницы
+     * @param user имя пользователя
+     * @param principal логическая переменная, true если пользователь зашёл
+     *                  и false если не авторизирован
+     * @return
+     */
     public ArrayList<NavModel> setNav(String name, String user, boolean principal) {
         ArrayList<NavModel> nav = new ArrayList<>();
         nav.add(new NavModel("/blog", "Лента"));
@@ -45,6 +56,11 @@ public class BlogController {
         return nav;
     }
 
+    /**
+     * Возвращает список уведомлений для пользователя
+     * @param user объект пользователя
+     * @return список уведомлений
+     */
     public List<NoticeModel> setNoticeList(UserEntity user) {
         List<NoticeModel> noticeList = new ArrayList<>();
         for (NoticeEntity notice: user.getNotice()) {
@@ -66,10 +82,14 @@ public class BlogController {
                 .sorted((o1,o2) -> -o1.getDateSort().compareTo(o2.getDateSort()))
                 .collect(Collectors.toList());
 
-//        Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
         return noticeList;
     }
 
+    /**
+     * Возвращает список пользователей, на которых можно подписаться
+     * @param user имя авторизированного пользователя
+     * @return список пользователей
+     */
     public List<UserModel> setUserList(UserEntity user) {
         List<UserModel> userList = new ArrayList<>();
         for (UserEntity users : userRepository.findAll()) {
@@ -77,9 +97,17 @@ public class BlogController {
                 userList.add(new UserModel(users.getName()));
             }
         }
+
         return userList;
     }
 
+    /**
+     * Генерирует главная страницу блога, содержащую записи подписок
+     * @param inputStart возвращает 1 при первом заходе на страницу, иначе 0
+     * @param principal данные пользователя
+     * @param model модель страницы, содержащая все объекты
+     * @return главная страница блога
+     */
     @RequestMapping("/blog")
     public String blogStart(@RequestParam(value = "new", required = false, defaultValue = "0") int inputStart,
                             Principal principal, Model model) {
@@ -100,20 +128,8 @@ public class BlogController {
                         record.getId())))
                 .sorted((o1,o2) -> -o1.getDateSort().compareTo(o2.getDateSort()))
                 .collect(Collectors.toList());
-//        List<RecordModel> recordList = new ArrayList<>();
-//        for (SubscribeEntity sub : user.getSubscribe()) {
-//            for (RecordEntity record : recordRepository.findByUser(userRepository.findByName(sub.getName()))) {
-//                String[] text = record.getText().split("\n");
-//                recordList.add(new RecordModel(text, sub.getName(), "", record.getDate(),
-//                        record.getLike(), record.getComm(),
-//                        likeRepository.findByUserAndRecord(user, record.getId())!=null,
-//                        favoriteRepository.findByUserAndRecord(user, record.getId())!=null,
-//                        record.getId()));
-//            }
-//        }
 
         if (recordList.size() != 0) {
-//            Collections.sort(recordList, RecordModel.COMPARE_BY_DATE);
             model.addAttribute("record", recordList);
             boolModel = new BoolModel("rec");
         } else {
@@ -142,6 +158,12 @@ public class BlogController {
         return "blog";
     }
 
+    /**
+     * Генерирует страницу, содержащую все понравившиеся пользователю записи
+     * @param principal данные пользователя
+     * @param model модель страницы, содержащая все объекты
+     * @return страница, содержащая все понравившиеся пользователю записи
+     */
     @RequestMapping("/blog/likeRecord")
     public String blogLike(Principal principal, Model model) {
         UserEntity user = userRepository.findByName(principal.getName());
@@ -182,6 +204,12 @@ public class BlogController {
         return "blog";
     }
 
+    /**
+     * Генерирует страницу, содержащую все записи, дабавленные в избранное пользователем
+     * @param principal данные пользователя
+     * @param model модель страницы, содержащая все объекты
+     * @return страница, содержащая все записи, дабавленные в избранное пользователем
+     */
     @RequestMapping("/blog/favRecord")
     public String blogFav(Principal principal, Model model) {
         UserEntity user = userRepository.findByName(principal.getName());
@@ -223,6 +251,13 @@ public class BlogController {
         return "blog";
     }
 
+    /**
+     * Генерирует страницу, содержащую все записи пользователя
+     * @param name имя пользователя, владеющего страницей
+     * @param principal данные авторизированного пользователя
+     * @param model модель страницы, содержащая все объекты
+     * @return страница, содержащая все записи пользователя
+     */
     @RequestMapping("/blog/userRecord")
     public String blogUser(@RequestParam(value = "name") String name,
                            Principal principal, Model model) {

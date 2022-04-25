@@ -6,32 +6,58 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Класс объекта пользователя
+ */
 @Entity
 public class UserEntity {
 
+    /**
+     * имя пользователя
+     */
     @Id
-
     @Column(name = "NAME")
     private String name;
 
+    /**
+     * электронная почта
+     */
     @Column(name = "EMAIL")
     private String email;
 
+    /**
+     * пароль пользователя
+     */
     @Column(name = "PASSWORD")
     private String password;
 
+    /**
+     * роль пользователя
+     */
     @Column(name = "ROLE")
     private String role;
 
+    /**
+     * описание пользователя
+     */
     @Column(name = "DESCRIPTION")
     private String description;
 
+    /**
+     * имя блога пользователя
+     */
     @Column(name = "NAMEBLOG")
     private String nameBlog;
 
+    /**
+     * false, если пользователь впервые зашёл на сайт. Иначе true
+     */
     @Column(name = "CLOSED")
     private boolean closed;
 
+    /**
+     * true, если почта пользователя подтверждена. Иначе false
+     */
     @Column(name = "CONFIRMED")
     private boolean confirmed;
 

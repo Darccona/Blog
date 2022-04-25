@@ -1,6 +1,5 @@
 package org.darccona.config;
 
-
 import org.darccona.database.entity.UserEntity;
 import org.darccona.database.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +8,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-
+/**
+ * Класс реализует UserDetailsService
+ */
 @Service
 public class UserService implements UserDetailsService {
+
     @Autowired
     private UserRepository userRepository;
 

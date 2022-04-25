@@ -1,11 +1,20 @@
 package org.darccona.model;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Класс модели комментария
+ */
 public class CommentModel {
 
+    /**
+     * Класс модели ответа на комментарий
+     */
     static class Reply {
         private long id;
         private String name;
@@ -44,12 +53,6 @@ public class CommentModel {
             }
             return " (в ответ " + nameReply + ')';
         }
-
-//        public static Comparator<Reply> COMPARE_BY_DATE_LAST = new Comparator<Reply>() {
-//            public int compare(Reply one, Reply other) {
-//                return one.date.compareTo(other.date);
-//            }
-//        };
     }
 
     private long id;
@@ -90,8 +93,8 @@ public class CommentModel {
     }
     public void sortReply() {
         reply = reply.stream().sorted(Comparator.comparing(Reply::getDateSort)).collect(Collectors.toList());
-//        Collections.sort(reply, Reply.COMPARE_BY_DATE_LAST);
     }
+
     public boolean getBoolReply() {
         return (reply.size() != 0);
     }
@@ -101,10 +104,4 @@ public class CommentModel {
     public List<Reply> getReply() {
         return reply;
     }
-
-//    public static Comparator<CommentModel> COMPARE_BY_DATE_NEW = new Comparator<CommentModel>() {
-//        public int compare(CommentModel other, CommentModel one) {
-//            return one.date.compareTo(other.date);
-//        }
-//    };
 }

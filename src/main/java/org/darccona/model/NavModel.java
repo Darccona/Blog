@@ -1,5 +1,8 @@
 package org.darccona.model;
 
+/**
+ * Класс модели верхней навигации на страницах
+ */
 public class NavModel {
     String url;
     String name;

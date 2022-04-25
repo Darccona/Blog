@@ -3,6 +3,9 @@ package org.darccona.model;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * Класс модели всех данных о пользователе
+ */
 public class AdminUserModel {
 
     static class Record {

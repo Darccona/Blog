@@ -19,31 +19,41 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Класс контроллера обработки настроек аккаунта пользователя
+ */
 @Controller
 public class SettingController {
 
     private static final Logger LOG = LoggerFactory.getLogger(SecurityController.class);
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    RecordRepository recordRepository;
+    private RecordRepository recordRepository;
     @Autowired
-    ConfirmationUserRepository confirmationUserRepository;
+    private ConfirmationUserRepository confirmationUserRepository;
 
+    /**
+     * Возвращает навигацию для страницы
+     * @param user имя пользователя
+     * @return
+     */
     public ArrayList<NavModel> setNav(String user) {
         ArrayList<NavModel> nav = new ArrayList<>();
         nav.add(new NavModel("/blog", "Лента"));
-//        nav.add(new NavModel("/blog/likeRecord", "Понравившееся"));
-//        nav.add(new NavModel("/blog/favRecord", "Избранное"));
         nav.add(new NavModel("/blog/userRecord?name="+user, "Мои_посты"));
         return nav;
     }
 
+    /**
+     * Возвращает список уведомлений для пользователя
+     * @param user объект пользователя
+     * @return список уведомлений
+     */
     public List<NoticeModel> setNoticeList(UserEntity user) {
         List<NoticeModel> noticeList = new ArrayList<>();
         for (NoticeEntity notice: user.getNotice()) {
@@ -64,10 +74,15 @@ public class SettingController {
                 .stream()
                 .sorted((o1,o2) -> -o1.getDateSort().compareTo(o2.getDateSort()))
                 .collect(Collectors.toList());
-//        Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
         return noticeList;
     }
 
+    /**
+     * Генерирует страницу для настройки аккаунта пользователя
+     * @param principal данные пользователя
+     * @param model модель страницы, содержащая все объекты
+     * @return страницу для настроек пользователя
+     */
     @GetMapping("/blog/settingUser")
     public String settingUser(Principal principal, Model model) {
         UserEntity user = userRepository.findByName(principal.getName());
@@ -86,6 +101,13 @@ public class SettingController {
         return "setting";
     }
 
+    /**
+     * Обрабатывает смену настроек пользователем
+     * @param setting модель, содержащая значения всех настроек
+     * @param principal данные пользователя
+     * @param model модель страницы, содержащая все объекты
+     * @return перенаправляет на страницу пользователя
+     */
     @PostMapping("/blog/settingUser/set")
     public String settingUserSet(@ModelAttribute("setting") SettingModel setting,
                            Principal principal, Model model) {
@@ -102,7 +124,6 @@ public class SettingController {
         }
 
         user.setDescription(setting.getDescription());
-//        user.setClosed(setting.getClosed());
         user.setNameBlog(setting.getNameBlog());
         user.setClosed(true);
         userRepository.save(user);
@@ -112,6 +133,13 @@ public class SettingController {
         return "redirect:" + url;
     }
 
+    /**
+     * Обрабатывает настройки пользователя при первом входе
+     * @param string2 модель, содержащая начальный набор настроек
+     * @param principal данные пользователя
+     * @param model модель страницы, содержащая все объекты
+     * @return перенаправляет на главную страницу сайта
+     */
     @PostMapping("/blog/setting/set")
     public String settingSet(@ModelAttribute("string2") String2Model string2,
                              Principal principal, Model model) {
@@ -125,6 +153,12 @@ public class SettingController {
         return "redirect:/blog";
     }
 
+    /**
+     * Обрабатывает настройки пользователя при первом входе, если пользователь не захотел настраивать сразу
+     * @param principal данные пользователя
+     * @param model модель страницы, содержащая все объекты
+     * @return перенаправляет на главную страницу сайта
+     */
     @GetMapping("/blog/setting/back")
     public String settingBack(Principal principal, Model model) {
         UserEntity user = userRepository.findByName(principal.getName());

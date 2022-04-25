@@ -4,6 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Класс модели всех данных о записи
+ */
 public class AdminRecordModel {
     private long id;
     private String[] text;

@@ -7,21 +7,35 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Класс объекта родительских комментариев
+ */
 @Entity
 public class CommentEntity {
 
+    /**
+     * номер комментария
+     */
     @Id
-
     @Column(name = "ID")
     @GeneratedValue(strategy= GenerationType.AUTO)
     private long id;
 
+    /**
+     * имя пользователя, оставившего комментарий
+     */
     @Column(name = "NAME")
     private String name;
 
+    /**
+     * текст комментария
+     */
     @Column(name = "TEXT")
     private String text;
 
+    /**
+     * дата, когда был оставлен комментарий
+     */
     @Column(name = "DATE")
     private Date date;
 

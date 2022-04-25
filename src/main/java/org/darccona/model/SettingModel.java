@@ -1,5 +1,8 @@
 package org.darccona.model;
 
+/**
+ * Класс модели настроек аккаунта пользователя
+ */
 public class SettingModel {
     private String description;
     private String nameBlog;

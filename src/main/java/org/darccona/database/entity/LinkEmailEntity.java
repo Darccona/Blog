@@ -5,17 +5,28 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.Date;
 
+/**
+ * Класс объекта смены пароля аккаунта
+ */
 @Entity
 public class LinkEmailEntity {
 
+    /**
+     * имя пользователя, меняющего пароль
+     */
     @Id
-
     @Column(name = "NAME")
     private String name;
 
+    /**
+     * ссылка для смены пароля
+     */
     @Column(name = "LINK")
     private String link;
 
+    /**
+     * дата, когда ссылка была отправленна
+     */
     @Column(name = "DATE")
     private Date date;
 

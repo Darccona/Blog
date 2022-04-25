@@ -1,5 +1,8 @@
 package org.darccona.model;
 
+/**
+ * Класс модели данных для регистрации нового пользователя
+ */
 public class RegModel {
     private String name;
     private String email;

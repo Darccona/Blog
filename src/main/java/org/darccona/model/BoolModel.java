@@ -1,5 +1,8 @@
 package org.darccona.model;
 
+/**
+ * Класс модели логических переменных для отображения страниц
+ */
 public class BoolModel {
     private boolean login = true;
     private boolean empty = false;

@@ -1,5 +1,8 @@
 package org.darccona.model;
 
+/**
+ * Класс модели двух строк
+ */
 public class String2Model {
     private String string1;
     private String string2;

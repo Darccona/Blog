@@ -6,6 +6,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+/**
+ * Класс для настройки доступа пользователю страниц
+ */
 @Configuration
 @EnableWebMvc
 @EnableWebSecurity
@@ -20,7 +23,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/blog/admin/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/blog/newPassword/**").permitAll()
                 .antMatchers("/blog/userRecord/**").permitAll()
-//                .antMatchers("/blog/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                 .anyRequest().authenticated()
 
             .and()

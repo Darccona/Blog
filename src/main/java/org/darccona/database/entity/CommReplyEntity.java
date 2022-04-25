@@ -3,23 +3,41 @@ package org.darccona.database.entity;
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * Класс объекта ответа на комментарии
+ */
 @Entity
 public class CommReplyEntity {
-    @Id
 
+    /**
+     * номер комментария
+     */
+    @Id
     @Column(name = "ID")
     @GeneratedValue(strategy= GenerationType.AUTO)
     private long id;
 
+    /**
+     * имя пользователя, оставившего комментарий
+     */
     @Column(name = "NAME")
     private String name;
 
+    /**
+     * текст комментария
+     */
     @Column(name = "TEXT")
     private String text;
 
+    /**
+     * номер комментария, на который отвечают
+     */
     @Column(name = "COMMID")
     private long commId;
 
+    /**
+     * дата, когда был оставлен комментарий
+     */
     @Column(name = "DATE")
     private Date date;
 

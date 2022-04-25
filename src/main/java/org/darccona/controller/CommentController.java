@@ -5,33 +5,44 @@ import org.darccona.database.repository.*;
 import org.darccona.model.StringModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 
+/**
+ * Класс контроллера обработки действий с комментариями
+ */
 @Controller
 public class CommentController {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    RecordRepository recordRepository;
+    private RecordRepository recordRepository;
     @Autowired
-    CommentRepository commentRepository;
+    private CommentRepository commentRepository;
     @Autowired
-    CommReplyRepository commReplyRepository;
+    private CommReplyRepository commReplyRepository;
     @Autowired
-    NoticeRepository noticeRepository;
+    private NoticeRepository noticeRepository;
 
+    /**
+     * Добавляет комментарий к записи или к родительскому комментарию
+     * @param string текст комментария
+     * @param id номер записи
+     * @param comm номер родительского комментария, если это ответ, иначе -1
+     * @param link ссылка на запись, к которой добавляется комментарий
+     * @param principal данные пользователя, добавляющего комментарий
+     * @return перенаправляет на страницу с записью, к которой добавили комментарий
+     */
     @PostMapping("/blog/comm")
     public String userComm(@ModelAttribute("commString") StringModel string,
                            @RequestParam(value = "id") long id,
                            @RequestParam(value = "comm", required = false, defaultValue = "-1") long comm,
                            @RequestParam(value = "link", required = false, defaultValue = "") String link,
-                           Principal principal, Model model) {
+                           Principal principal) {
         UserEntity user = userRepository.findByName(principal.getName());
         RecordEntity record = recordRepository.findById(id);
 
@@ -69,12 +80,21 @@ public class CommentController {
         return "redirect:" + url;
     }
 
+    /**
+     * Добавляет комментарий к ответу
+     * @param string текст комментария
+     * @param id номер записи
+     * @param comm номер родительского комментария
+     * @param link ссылка на запись, к которой добавляется комментарий
+     * @param principal
+     * @return перенаправляет на страницу с записью, к которой добавили комментарий
+     */
     @PostMapping("/blog/commReply")
     public String userCommReply(@ModelAttribute("commString") StringModel string,
                                 @RequestParam(value = "id") long id,
                                 @RequestParam(value = "comm") long comm,
                                 @RequestParam(value = "link", required = false, defaultValue = "") String link,
-                                Principal principal, Model model) {
+                                Principal principal) {
 
         UserEntity user = userRepository.findByName(principal.getName());
         RecordEntity record = recordRepository.findById(id);

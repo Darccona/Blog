@@ -2,10 +2,16 @@ package org.darccona.database.entity;
 
 import javax.persistence.*;
 
+/**
+ * Класс объекта подписки пользователя
+ */
 @Entity
 public class SubscribeEntity {
-    @Id
 
+    /**
+     * имя пользователя, на которого подписались
+     */
+    @Id
     @Column(name = "USERNAME")
     private String name;
 

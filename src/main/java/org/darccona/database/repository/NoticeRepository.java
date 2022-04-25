@@ -6,6 +6,9 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
+/**
+ * @see org.darccona.database.entity.NoticeEntity
+ */
 public interface NoticeRepository extends CrudRepository<NoticeEntity, Long> {
 
     NoticeEntity findById(long id);

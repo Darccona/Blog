@@ -6,6 +6,9 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
+/**
+ * @see org.darccona.database.entity.SubscribeEntity
+ */
 public interface SubscribeRepository extends CrudRepository<SubscribeEntity, Long> {
 
     List<SubscribeEntity> findByUser(UserEntity user);

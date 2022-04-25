@@ -4,31 +4,39 @@ import org.darccona.database.entity.*;
 import org.darccona.database.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 
+/**
+ * Класс контроллера обработки реакций пользователя
+ */
 @Controller
 public class ReactionsController {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    RecordRepository recordRepository;
+    private RecordRepository recordRepository;
     @Autowired
-    NoticeRepository noticeRepository;
+    private NoticeRepository noticeRepository;
     @Autowired
-    SubscribeRepository subscribeRepository;
+    private SubscribeRepository subscribeRepository;
     @Autowired
-    LikeRepository likeRepository;
+    private LikeRepository likeRepository;
     @Autowired
-    FavoriteRepository favoriteRepository;
+    private FavoriteRepository favoriteRepository;
 
+    /**
+     * Обработка подписки пользователя
+     * @param name имя пользователя, на которого подписываются
+     * @param principal данные авторизированного пользователя
+     * @return перенаправляет на страницу пользователя, на которого подписались
+     */
     @GetMapping("/blog/sub")
     public String userSub(@RequestParam(value = "name") String name,
-                          Principal principal, Model model) {
+                          Principal principal) {
         UserEntity user = userRepository.findByName(principal.getName());
         UserEntity sub = userRepository.findByName(name);
         SubscribeEntity subscribe = subscribeRepository.findByUserAndName(user, sub.getName());
@@ -52,10 +60,17 @@ public class ReactionsController {
         return "redirect:/blog/userRecord?name=" + sub.getName();
     }
 
+    /**
+     * Обработка пользователем нажатия "нравится"
+     * @param id номер записи
+     * @param link ссылка на страницу, с которой пользователь поставил "нравится"
+     * @param principal данные пользователя
+     * @return перенаправляет на страницу, с которой пользователь поставил "нравится"
+     */
     @GetMapping("/blog/like")
     public String userLike(@RequestParam(value = "id") long id,
                            @RequestParam(value = "link", required = false, defaultValue = "") String link,
-                           Principal principal, Model model) {
+                           Principal principal) {
         UserEntity user = userRepository.findByName(principal.getName());
         RecordEntity record = recordRepository.findById(id);
         LikeEntity like = likeRepository.findByUserAndRecord(user, id);
@@ -86,10 +101,17 @@ public class ReactionsController {
         return "redirect:" + url;
     }
 
+    /**
+     * Обработка пользователем добавления в избранное
+     * @param id номер записи
+     * @param link ссылка на страницу, с которой пользователь добавил в избранное
+     * @param principal данные пользователя
+     * @return перенаправляет на страницу, с которой пользователь добавил в избранное
+     */
     @GetMapping("/blog/fav")
     public String userFav(@RequestParam(value = "id") long id,
                           @RequestParam(value = "link", required = false, defaultValue = "") String link,
-                          Principal principal, Model model) {
+                          Principal principal) {
         UserEntity user = userRepository.findByName(principal.getName());
         RecordEntity record = recordRepository.findById(id);
         FavoriteEntity favorite = favoriteRepository.findByUserAndRecord(user, id);

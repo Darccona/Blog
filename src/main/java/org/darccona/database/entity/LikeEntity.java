@@ -2,10 +2,16 @@ package org.darccona.database.entity;
 
 import javax.persistence.*;
 
+/**
+ * Класс объекта понравившиеся записи пользователя
+ */
 @Entity
 public class LikeEntity {
-    @Id
 
+    /**
+     * номер понравившейся записи
+     */
+    @Id
     @Column(name = "RECORD")
     private long record;
 

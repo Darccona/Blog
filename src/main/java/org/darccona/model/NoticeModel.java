@@ -1,9 +1,11 @@
 package org.darccona.model;
 
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
 import java.util.Date;
 
+/**
+ * Класс модели уведомления
+ */
 public class NoticeModel {
     private boolean comm;
 
@@ -44,10 +46,4 @@ public class NoticeModel {
     public long getId() {
         return id;
     }
-
-//    public static Comparator<NoticeModel> COMPARE_BY_DATE = new Comparator<NoticeModel>() {
-//        public int compare(NoticeModel other, NoticeModel one) {
-//            return one.date.compareTo(other.date);
-//        }
-//    };
 }

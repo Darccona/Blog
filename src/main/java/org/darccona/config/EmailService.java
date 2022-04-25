@@ -1,10 +1,15 @@
 package org.darccona.config;
 
-import javax.mail.MessagingException;
-import java.io.FileNotFoundException;
-
+/**
+ * Интерфейс для отправки электронных писем
+ */
 public interface EmailService {
 
+    /**
+     * Отправка электронных писем
+     * @param toAddress адрес получателя
+     * @param subject тема письма
+     * @param message тело письма
+     */
     void sendSimpleEmail(final String toAddress, final String subject, final String message);
-    void sendEmailWithAttachment(final String toAddress, final String subject, final String message, final String attachment) throws MessagingException, FileNotFoundException;
 }

@@ -1,9 +1,11 @@
 package org.darccona.model;
 
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
 import java.util.Date;
 
+/**
+ * Класс модели данных о записи
+ */
 public class RecordModel {
     private String[] text;
     private String username;
@@ -98,10 +100,4 @@ public class RecordModel {
     public long getId() {
         return id;
     }
-
-//    public static Comparator<RecordModel> COMPARE_BY_DATE = new Comparator<RecordModel>() {
-//        public int compare(RecordModel other, RecordModel one) {
-//            return one.date.compareTo(other.date);
-//        }
-//    };
 }

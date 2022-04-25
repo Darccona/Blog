@@ -3,27 +3,47 @@ package org.darccona.database.entity;
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * Класс объекта уведомления
+ */
 @Entity
 public class NoticeEntity {
 
+    /**
+     * номер уведомления
+     */
     @Id
-
     @Column(name = "ID")
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
 
+    /**
+     * дата отправки уведомления
+     */
     @Column(name = "DATE")
     private Date date;
 
+    /**
+     * пользователь, вызвавший уведомления
+     */
     @Column(name = "AUTHOR")
     private String author;
 
+    /**
+     * запись, связанная с уведомлением
+     */
     @Column(name = "RECORD")
     private long record;
 
+    /**
+     * комментарий, связанный с уведомлением
+     */
     @Column(name = "COMM")
     private String comm;
 
+    /**
+     * причина уведомления
+     */
     @Column(name = "TYPE")
     private int type;
 

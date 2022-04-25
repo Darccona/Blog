@@ -3,29 +3,45 @@ package org.darccona.database.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Класс объекта записи
+ */
 @Entity
 public class RecordEntity {
 
+    /**
+     * номер записи
+     */
     @Id
-
     @Column(name = "ID")
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
 
+    /**
+     * текст записи
+     */
     @Column(name = "TEXT", length = 16383)
     private String text;
 
+    /**
+     * дата выкладывания записи
+     */
     @Column(name = "DATE")
     private Date date;
 
+    /**
+     * количество пользователей, которым понравилась запись
+     */
     @Column(name = "LIKEUSER")
     private int like;
 
+    /**
+     * количество комментарий под записью
+     */
     @Column(name = "COMMUSER")
     private int comm;
 

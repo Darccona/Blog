@@ -11,33 +11,40 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Класс контроллера обработки действий с записью
+ */
 @Controller
 public class RecordController {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    RecordRepository recordRepository;
+    private RecordRepository recordRepository;
     @Autowired
-    CommentRepository commentRepository;
+    private CommentRepository commentRepository;
     @Autowired
-    CommReplyRepository commReplyRepository;
+    private CommReplyRepository commReplyRepository;
     @Autowired
-    SubscribeRepository subscribeRepository;
+    private SubscribeRepository subscribeRepository;
     @Autowired
-    LikeRepository likeRepository;
+    private LikeRepository likeRepository;
     @Autowired
-    FavoriteRepository favoriteRepository;
+    private FavoriteRepository favoriteRepository;
 
+    /**
+     * Возвращает навигацию для страницы
+     * @param user имя пользователя
+     * @param principal логическая переменная, true если пользователь зашёл
+     *                  и false если не авторизирован
+     * @return
+     */
     public ArrayList<NavModel> setNav(String user, boolean principal) {
         ArrayList<NavModel> nav = new ArrayList<>();
         nav.add(new NavModel("/blog", "Лента"));
-//        nav.add(new NavModel("/blog/likeRecord", "Понравившееся"));
-//        nav.add(new NavModel("/blog/favRecord", "Избранное"));
         if (principal) {
             nav.add(new NavModel("/blog/userRecord?name=" + user, "Мои_посты"));
         } else {
@@ -46,6 +53,13 @@ public class RecordController {
         return nav;
     }
 
+    /**
+     * Возвращает страницу с записью и комментариями к ней
+     * @param id номер записи
+     * @param principal данные пользователя
+     * @param model модель страницы, содержащая все объекты
+     * @return страница записи
+     */
     @RequestMapping("/blog/userRecord/record")
     public String blogRecord(@RequestParam(value = "id") long id,
                              Principal principal, Model model) {
@@ -98,7 +112,6 @@ public class RecordController {
                 }
             }
             noticeList = noticeList.stream().sorted((o1,o2) -> -o1.getDateSort().compareTo(o2.getDateSort())).collect(Collectors.toList());
-//            Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
             model.addAttribute("notice", noticeList);
             model.addAttribute("num", user.getNotice().size());
 
@@ -143,7 +156,6 @@ public class RecordController {
                 .stream()
                 .sorted((o1,o2) -> -o1.getDateSort().compareTo(o2.getDateSort()))
                 .collect(Collectors.toList());
-//        Collections.sort(commList, CommentModel.COMPARE_BY_DATE_NEW);
         model.addAttribute("comm", commList);
 
         model.addAttribute("link", "userRecord/record?id=" + id);

@@ -14,30 +14,40 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Класс контроллера обработки действий администратора
+ */
 @Controller
 public class AdminController {
 
     private static final Logger LOG = LoggerFactory.getLogger(SecurityController.class);
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    RecordRepository recordRepository;
+    private RecordRepository recordRepository;
     @Autowired
-    SubscribeRepository subscribeRepository;
+    private SubscribeRepository subscribeRepository;
     @Autowired
-    LikeRepository likeRepository;
+    private LikeRepository likeRepository;
     @Autowired
-    FavoriteRepository favoriteRepository;
+    private FavoriteRepository favoriteRepository;
     @Autowired
-    CommentRepository commentRepository;
+    private CommentRepository commentRepository;
     @Autowired
-    CommReplyRepository commReplyRepository;
+    private CommReplyRepository commReplyRepository;
 
+    /**
+     * Возвращает навигацию для страницы
+     * @param name имя страницы
+     * @param user имя пользователя
+     * @param principal логическая переменная, true если пользователь зашёл
+     *                  и false если не авторизирован
+     * @return
+     */
     public ArrayList<NavModel> setNav(String name, String user, boolean principal) {
         ArrayList<NavModel> nav = new ArrayList<>();
         nav.add(new NavModel("/blog", "Лента"));
@@ -55,6 +65,11 @@ public class AdminController {
         return nav;
     }
 
+    /**
+     * Возвращает список уведомлений для пользователя
+     * @param user объект пользователя
+     * @return список уведомлений
+     */
     public List<NoticeModel> setNoticeList(UserEntity user) {
         List<NoticeModel> noticeList = new ArrayList<>();
         for (NoticeEntity notice: user.getNotice()) {
@@ -75,10 +90,16 @@ public class AdminController {
                 .stream()
                 .sorted((o1,o2) -> -o1.getDateSort().compareTo(o2.getDateSort()))
                 .collect(Collectors.toList());
-//        Collections.sort(noticeList, NoticeModel.COMPARE_BY_DATE);
         return noticeList;
     }
 
+    /**
+     * Генерирует страницу управления пользователем для администратора
+     * @param name имя владельца страницы
+     * @param principal данные администратора
+     * @param model модель страницы, содержащая все объекты
+     * @return страница управления пользователем
+     */
     @RequestMapping("/blog/admin/blogUser")
     public String blog(@RequestParam(value = "name") String name, Principal principal, Model model) {
 
@@ -116,6 +137,13 @@ public class AdminController {
         return "adminBlog";
     }
 
+    /**
+     * Генерирует страницу управления записью для администратора
+     * @param id номер записи
+     * @param principal данные администратора
+     * @param model модель страницы, содержащая все объекты
+     * @return страница управления записью
+     */
     @RequestMapping("/blog/admin/record")
     public String record(@RequestParam(value = "id") long id,
                          Principal principal, Model model) {
@@ -155,7 +183,6 @@ public class AdminController {
                 stream().
                 sorted((o1,o2) -> -o1.getDateSort().compareTo(o2.getDateSort())).
                 collect(Collectors.toList());
-//        Collections.sort(commList, CommentModel.COMPARE_BY_DATE_NEW);
         recordModel.setComments(commList);
 
         model.addAttribute("record", recordModel);
@@ -168,6 +195,11 @@ public class AdminController {
         return "adminRecord";
     }
 
+    /**
+     * Удаляет пользователя
+     * @param name имя удаляемого пользователя
+     * @return перенаправляет на стартовую страницу
+     */
     @RequestMapping("/blog/admin/delUser")
     public String delUser(@RequestParam(value = "name") String name) {
         UserEntity user = userRepository.findByName(name);
@@ -177,6 +209,11 @@ public class AdminController {
         return "redirect:/blog";
     }
 
+    /**
+     * Удаляет запись
+     * @param id номер удаляемой записи
+     * @return перенаправляет на страницу пользователя удалённой записи
+     */
     @RequestMapping("/blog/admin/delRecord")
     public String delRecord(@RequestParam(value = "id") long id) {
         RecordEntity record = recordRepository.findById(id);
@@ -188,6 +225,13 @@ public class AdminController {
         return "redirect:" + url;
     }
 
+    /**
+     * Удаляет комментарий
+     * @param id номер записи, у которой удаляют комментарий
+     * @param recId номер удаляемого комментария, если он не является ответом, иначе номер родительского комментария
+     * @param commId номер удаляемого комментария, если он является ответом, иначе присваивается -1
+     * @return перенаправляет на страницу записи, у которой удаляют комментарий
+     */
     @RequestMapping("/blog/admin/delComment")
     public String delComment(@RequestParam(value = "id") long id,
                              @RequestParam(value = "recId") long recId,
@@ -213,8 +257,13 @@ public class AdminController {
         return "redirect:" + url;
     }
 
+    /**
+     * Присваивает пользователю права администратора
+     * @param name имя пользователя, получающего права администратора
+     * @return перенаправляет на страницу пользователя, получившего права администратора
+     */
     @GetMapping("/blog/admin/setAdmin")
-    public String setAdmin(@RequestParam(value = "name") String name, Principal principal) {
+    public String setAdmin(@RequestParam(value = "name") String name) {
         UserEntity user = userRepository.findByName(name);
         user.setRole("ADMIN");
         userRepository.save(user);
@@ -224,8 +273,13 @@ public class AdminController {
         return "redirect:" + url;
     }
 
+    /**
+     * Удаляет права администратора у пользователя
+     * @param name имя пользователя, лишённого прав администратора
+     * @return перенаправляет на страницу пользователя, лишённого прав администратора
+     */
     @GetMapping("/blog/admin/delAdmin")
-    public String delAdmin(@RequestParam(value = "name") String name, Principal principal) {
+    public String delAdmin(@RequestParam(value = "name") String name) {
         UserEntity user = userRepository.findByName(name);
         user.setRole("USER");
         userRepository.save(user);

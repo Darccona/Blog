@@ -1,11 +1,14 @@
 package org.darccona.controller;
 
-import org.darccona.database.entity.*;
-import org.darccona.database.repository.*;
+import org.darccona.database.entity.NoticeEntity;
+import org.darccona.database.entity.RecordEntity;
+import org.darccona.database.entity.UserEntity;
+import org.darccona.database.repository.NoticeRepository;
+import org.darccona.database.repository.RecordRepository;
+import org.darccona.database.repository.UserRepository;
 import org.darccona.model.StringModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,20 +16,30 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 
+/**
+ * Класс контроллера обработки действий пользователя
+ */
 @Controller
 public class ActionsController {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    RecordRepository recordRepository;
+    private RecordRepository recordRepository;
     @Autowired
-    NoticeRepository noticeRepository;
+    private NoticeRepository noticeRepository;
 
+    /**
+     * Обрабатывает добавление новой записи
+     * @param string текст новой записи
+     * @param link ссылка на страницу, с которой пользователь добавил новую запись
+     * @param principal данные пользователя, добавившего новую запись
+     * @return переправляет на страницу, с которой пользователь добавил новую запись
+     */
     @PostMapping("/blog/addRecord")
     public String recordAdd(@ModelAttribute("string") StringModel string,
                             @RequestParam(value = "link", required = false, defaultValue = "") String link,
-                            Principal principal, Model model) {
+                            Principal principal) {
         UserEntity user = userRepository.findByName(principal.getName());
         RecordEntity record = new RecordEntity(string.getText());
         record.setUser(user);
@@ -36,11 +49,19 @@ public class ActionsController {
         return "redirect:" + url;
     }
 
+    /**
+     * Обрабатывает редавтирование записи
+     * @param string новый текст записи
+     * @param id номер изменяемой записи
+     * @param link ссылка на страницу, с которой пользователь меняет запись
+     * @param principal данные пользователя, меняющего запись
+     * @return переправляет на страницу, с которой пользователь меняет запись
+     */
     @PostMapping("/blog/editRecord")
     public String recordEdit(@ModelAttribute("editString") StringModel string,
                              @RequestParam(value = "id") long id,
                              @RequestParam(value = "link", required = false, defaultValue = "") String link,
-                             Principal principal, Model model) {
+                             Principal principal) {
         UserEntity user = userRepository.findByName(principal.getName());
         RecordEntity record = recordRepository.findById(id);
 
@@ -54,10 +75,17 @@ public class ActionsController {
         return "redirect:" + url;
     }
 
+    /**
+     * Обрабатывает удаление записи
+     * @param id номер удаляемой записи
+     * @param link ссылка на страницу, с которой пользователь удаляет запись
+     * @param principal данные пользователя, удаляющего запись
+     * @return переправляет на страницу, с которой пользователь удалил запись
+     */
     @GetMapping("/blog/delRecord")
     public String recordDel(@RequestParam(value = "id") long id,
                             @RequestParam(value = "link", required = false, defaultValue = "") String link,
-                            Principal principal, Model model) {
+                            Principal principal) {
         UserEntity user = userRepository.findByName(principal.getName());
         RecordEntity record = recordRepository.findById(id);
         UserEntity userRecord = record.getUser();
@@ -74,9 +102,15 @@ public class ActionsController {
         return "redirect:" + url;
     }
 
+    /**
+     * Обрабатывает удаление уведомления
+     * @param id номер удаляемого уведомление
+     * @param principal данные пользователя, удаляющего уведомление
+     * @return переправляет на страницу пользователя или запись в зависимости от типа уведомления
+     */
     @GetMapping("/blog/delMes")
     public String mesDel(@RequestParam(value = "id") long id,
-                         Principal principal, Model model) {
+                         Principal principal) {
         UserEntity user = userRepository.findByName(principal.getName());
         NoticeEntity notice = noticeRepository.findById(id);
         String url = "http://localhost:8080/blog/";
@@ -93,9 +127,15 @@ public class ActionsController {
         return "redirect:" + url;
     }
 
+    /**
+     * Обрабатывает удаление всех уведомлений
+     * @param link ссылка на страницу, с которой пользователь удаляет все уведомления
+     * @param principal данные пользователя, удаляющего уведомления
+     * @return переправляет на страницу, с которой пользователь удалил уведомления
+     */
     @GetMapping("/blog/delAllMes")
     public String mesAllDel(@RequestParam(value = "link", required = false, defaultValue = "") String link,
-                            Principal principal, Model model) {
+                            Principal principal) {
         UserEntity user = userRepository.findByName(principal.getName());
         user.removeAllNotice();
         userRepository.save(user);

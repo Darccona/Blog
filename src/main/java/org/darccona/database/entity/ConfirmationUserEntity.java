@@ -5,23 +5,40 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.Date;
 
+/**
+ * Класс объекта подтверждения аккаунта
+ */
 @Entity
 public class ConfirmationUserEntity {
 
+    /**
+     * имя пользоваателя, чей аккаунт подтверждают
+     */
     @Id
-
     @Column(name = "NAME")
     private String name;
 
+    /**
+     * электронная почта пользователя
+     */
     @Column(name = "EMAIL")
     private String email;
 
+    /**
+     * дата, когда ссылка была отправленна
+     */
     @Column(name = "DATE")
     private Date date;
 
+    /**
+     * ссылка для подтверждения аккаунта
+     */
     @Column(name = "LINK")
     private String link;
 
+    /**
+     * код для подтверждения аккаунта
+     */
     @Column(name = "CODE")
     private String code;
 

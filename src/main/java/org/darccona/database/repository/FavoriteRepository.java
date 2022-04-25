@@ -6,6 +6,9 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
+/**
+ * @see org.darccona.database.entity.FavoriteEntity
+ */
 public interface FavoriteRepository extends CrudRepository<FavoriteEntity, Long> {
 
     List<FavoriteEntity> findByUser(UserEntity user);
