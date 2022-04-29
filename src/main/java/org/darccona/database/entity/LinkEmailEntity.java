@@ -40,11 +40,18 @@ public class LinkEmailEntity {
     public String getName() {
         return name;
     }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
     public String getLink() {
         return link;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    public void setDate(Date date) {
+        this.date = date;
+    }
+    public Date getDate() {
+        return date;
     }
 }

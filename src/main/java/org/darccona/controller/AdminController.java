@@ -161,7 +161,7 @@ public class AdminController {
 
         List<UserModel> userFav = new ArrayList<>();
         for (FavoriteEntity fav: favoriteRepository.findByRecord(record.getId())) {
-            userLike.add(new UserModel(fav.getUser().getName()));
+            userFav.add(new UserModel(fav.getUser().getName()));
         }
         recordModel.setFavUser(userFav);
 

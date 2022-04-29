@@ -76,6 +76,6 @@ public class ConfirmationUserEntity {
         return date;
     }
     public void setDate() {
-        date = new Date();;
+        date = new Date();
     }
 }
